@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block page %}
+<div ng-app="mapsApp">
+<nav class="top-bar" data-topbar role="navigation">
+    <ul class="title-area">
+        <li class="name">
+            <h1><a href="#">Immodispo</a></h1>
+        </li>
+        <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+
+    <section class="top-bar-section">
+        <!-- Left Nav Section -->
+        <ul class="left">
+            <li class="has-form">
+                <div class="row collapse">
+                    <div class="large-8 small-9 columns">
+                        <input type="text" placeholder="Find Stuff">
+                    </div>
+                    <div class="large-4 small-3 columns">
+                        <a href="#" class="alert button expand">Search</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </section>
+</nav>
+<div class="fill-height row">
+    <div class="medium-3 large-3 columns">
+        <form>
+            <label>Purchase<input type="radio" name="salerent"></label>
+            <label>Rent<input type="radio" name="salerent"></label>
+
+            <label>Apartment<input type="checkbox" name="construction"></label>
+            <label>House<input type="checkbox" name="construction"></label>
+            <label>Terrain<input type="checkbox" name="construction"></label>
+
+            <label>Min Price<input type="text" name="minprice"></label>
+            <label>Max Price<input type="text" name="maxprice"></label>
+
+            <label>Min Size<input type="text" name="minsize"></label>
+            <label>Max Size<input type="text" name="maxsize"></label>
+
+            <label>Min Bedrooms<input type="text" name="minbed"></label>
+            <label>Max Bedrooms<input type="text" name="maxbed"></label>
+
+
+        </form>
+        <ul class="listing-results">
+
+        </ul>
+    </div>
+    <div id="map-canvas" class="medium-9 large-9 columns"></div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script>
+    var mapOptions = {
+        zoom: 7,
+        disableDefaultUI: true,
+        minZoom: 6,
+        center: new google.maps.LatLng(47, 2),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+
+    google.maps.event.trigger(map,'resize');
+</script>
+</div>
+{% endblock %}

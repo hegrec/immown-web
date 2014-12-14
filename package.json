@@ -1,0 +1,17 @@
+{
+  "name": "immodispo-web",
+  "version": "1.0.0",
+  "description": "Immodispo web server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^8.0.0",
+    "mysql": "^2.5.3",
+    "nunjucks": "^1.1.0",
+    "squel": "^3.10.0"
+  }
+}

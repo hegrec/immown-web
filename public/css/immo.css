@@ -1,0 +1,16 @@
+.fill-height {
+    position: fixed;
+    top: 45px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    max-width: 100%;
+}
+
+.fill-height > div {
+    min-height: 100%;
+}
+
+#map-canvas {
+    min-height: 100%;
+}

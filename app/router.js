@@ -30,5 +30,4 @@ module.exports = function(server) {
             reply.render("map.html");
         }
     });
-
 };

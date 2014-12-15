@@ -4,7 +4,6 @@ var server = new Hapi.Server();
 server.connection({ port: 3000 });
 
 var plugins = [
-    require('./plugins/domain'),
     require('./plugins/nunjucks')
 ];
 

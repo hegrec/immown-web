@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "hapi": "^8.0.0",
+    "immodispo-api-client": "https://github.com/hegrec/immodispo-api-client/archive/0.2.0.tar.gz",
     "mysql": "^2.5.3",
     "nunjucks": "^1.1.0",
     "squel": "^3.10.0"

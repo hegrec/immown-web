@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^0.9.0",
     "hapi": "^8.0.0",
     "immodispo-api-client": "https://github.com/hegrec/immodispo-api-client/archive/0.2.0.tar.gz",
+    "lodash": "^2.4.1",
     "mysql": "^2.5.3",
     "nunjucks": "^1.1.0",
     "squel": "^3.10.0"

@@ -1,44 +1,37 @@
-<li class="sidebar-listing">
-    {% if listings.length == 0 %}
-    {{listing_count}}listing available
-    {% else %}
-    {{listing_count}}listings available
-    {% endif %}
-</li>
 {% for listing in listings %}
 <li class="sidebar-listing" data-id="{{listing.id}}" data-town-id="{{listing.town.id}}">
     <a id="view_listing_{{ listing.id }}" href="/listing/{{ listing.id }}" style="text-decoration: none; color: #000;">
-        <div style='height: 130px; padding:7px; border-bottom: 1px solid #eee; background-color: #{% cycle "ddd" "ccc" %};'>
+        <div style='height: 130px; padding:7px; border-bottom: 1px solid #eee; background-color: #ccc;'>
 
-            {% if listing.images.all.0 %}
-            <div class="img-thumbnail" style="position: relative; background-image:url(/cdn/listing_images/{{listing.images.all.0.image}}); background-size: cover; background-position: 50%; width: 118px; height: 118px; float:left;">
+            {% if listing.images | length > 0 %}
+            <div class="img-thumbnail" style="position: relative; background-image:url({{listing.images[0].standard_url | cdn}}); background-size: cover; background-position: 50%; width: 118px; height: 118px; float:left;">
                 <div style="width:90px; height: 15px; position: absolute; bottom: 0px; left: 0px; font-size: 11px; text-align: center; background-color:rgba(0,0,0,0.6); color: white;">
-                    {{listing.images.all|length}} images
+                    {{listing.images|length}} images
                 </div>
             </div>
             {% else %}
             <div class="img-thumbnail" style="background-size: cover; background-position: 50%; width: 90px; height: 90px; float:left;"></div>
             {% endif %}
             <div style='padding-left: 10px; font-size: 13px;'>
-                <strong>listing.construction_type {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
+                <strong>{{listing.construction_type}} {% if listing.isRental %}for rent{% else %}for sale{% endif %}</strong>
 
-                <div>{{ listing.price|intcomma }}€</div>
-                {% if listing.num_rooms %}
-                <div>{{ listing.num_rooms }} Rooms</div>
+                <div>{{ listing.price }}€</div>
+                {% if listing.numRooms %}
+                <div>{{ listing.numRooms }} Rooms</div>
                 {% endif %}
-                {% if listing.total_surface %}
-                <div>{{ listing.total_surface }}m<sup>2</sup></div>
+                {% if listing.totalSurface %}
+                <div>{{ listing.totalSurface }}m<sup>2</sup></div>
                 {% else %}
                 <div>&nbsp;</div>
                 {% endif %}
-                <span class="floatRight">{{ listing.town.town_name }}</span>
+                <span class="floatRight">{{ listing.town.name }}</span>
             </div>
 
         </div>
     </a>
 </li>
 {% endfor %}
-{% if not listings.0 %}
+{% if listings|length == 0 %}
 <li class="sidebar-listing">
     No properties found matching your desired criteria
 </li>

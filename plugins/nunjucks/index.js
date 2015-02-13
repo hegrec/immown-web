@@ -1,5 +1,6 @@
 var nunjucks = require('nunjucks'),
-    path = require('path');
+    path = require('path'),
+    environment = require('./../../env');
 
 
 
@@ -7,6 +8,9 @@ var nunjucks = require('nunjucks'),
 exports.register = function (server, options, next) {
     var env = nunjucks.configure(path.join(__dirname, '../../views'));
 
+    env.addFilter("cdn", function(resource) {
+       return environment.CDN_ROOT + resource;
+    });
     server.decorate('reply', 'render', function(templateName, context) {
 
         var replyObject = this;

@@ -12,5 +12,16 @@
 }
 
 #map-canvas {
-    min-height: 100%;
+    position: absolute;
+    left: 450px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+#map-sidebar {
+    width:450px;
+    float: left;
+    overflow-y: scroll;
+    max-height: 100%;
 }

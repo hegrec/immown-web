@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% block page %}
+<header class="hero-header">
+    {% include "partials/topbar.html" %}
+    <div class="header-focus row">
+        <h2>Join the premium real estate network.</h2>
+
+        <form action='/sign-up/' method='POST' class="medium-offset-2 medium-8 columns">
+            <label>Email<input name="email" type="text"></label>
+            <label>Password<input name="password" type="password"></label>
+            <button type="submit">Go</button>
+        </form>
+        <div class="large-4 columns"></div>
+    </div>
+</header>
+{% endblock %}

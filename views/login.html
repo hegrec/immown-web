@@ -1,0 +1,17 @@
+
+{% extends "base.html" %}
+
+{% block page %}
+<header class="hero-header">
+    {% include "partials/topbar.html" %}
+    <div class="header-focus row">
+        <h2>Your home is out there.</h2>
+        <h3>Find it here.</h3>
+
+        <form action='/map/' method='POST' class="medium-offset-2 medium-8 columns">
+            <input name="term" type="text"><button type="submit">Go</button>
+        </form>
+        <div class="large-4 columns"></div>
+    </div>
+</header>
+{% endblock %}

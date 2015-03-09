@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block page %}
+{% include "partials/topbar.html" %}
+<div class="row">
+    <div class="medium-3 columns">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="floatRight" id="listingPriceText"><strong>{{ listing.price }}€ {% if listing.is_rental %}monthly{% endif %}</strong></div>
+                <p class="lead">{% if listing.is_rental %}For rent{% else %}For sale{% endif %}</p>
+                {% if listing.num_bedrooms %}
+                    <div>
+                        {{listing.num_bedrooms}}  bed
+                    </div>
+                {% endif %}
+                {% if listing.num_bathrooms %}
+                    <div>
+                        {{listing.num_bathrooms}}  bath
+                    </div>
+                {% endif %}
+                {% if listing.total_surface %}
+                    <div>
+                        Interior Size: {{listing.total_surface}}m<sup>2</sup>
+                    </div>
+                {% endif %}
+                {% if listing.land_surface %}
+                    <div>
+                        Lot Size: {{listing.land_surface}}m<sup>2</sup>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel panel-default visible-md visible-lg">
+            <div class="panel-heading">
+                <h3 class="panel-title">Agency</h3>
+            </div>
+            <div class="panel-body">
+                {% if listing.agency %}
+                    <div>{{listing.agency.name}}</div>
+                    {% if listing.agency.image.indexOf("null") == -1 %}
+                    <img src="{{listing.agency.image | cdn}}" class="img img-thumbnail img-responsive">
+                    {% endif %}
+                    {% if listing.agency.telephone %}
+                    <form role="form" id="telephone_form">
+                        <input type="hidden" value="{{listing.agency.id}}" id="agency_id">
+                        <button type="submit" id="phone_submit" class="btn btn-default btn-block">
+                            <span class="glyphicon glyphicon-earphone"></span> Telephone
+                        </button>
+                    </form>
+                    {% endif %}
+                {% endif %}
+                <a href="{{listing.listing_url}}" target="_blank">
+                    <button type="button" id="website_view" class="btn btn-default btn-block">
+                        <span class="glyphicon glyphicon-globe"></span> View Original Listing
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Similar Listings</h3>
+            </div>
+            <div class="panel-body">
+                {% for sim in similars %}
+                <div>
+                    <a id="view_listing_{{ sim.id }}" href="/listing/{{ sim.id }}">
+                        <div class="img-thumbnail" style="background-image:url(/cdn/listing_images/{{sim.images[0].standard_url}});">
+                            {{sim.images | length}} images
+                        </div>
+                        <div>
+                            <span class="floatRight">{{ sim.town.town_name }}</span>
+                            <div>{{ sim.price }}€</div>
+                            {% if sim.num_rooms %}
+                                <div>{{ sim.num_rooms }} Rooms</div>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="medium-9 columns">
+        <div class="preview-container">
+            <img id="preview-image" src="{{listing.images[0].standard_url | cdn}}" alt="Listing image">
+        </div>
+        <div id="image-container">
+            {% for img in listing.images %}
+            <img class="img-thumbnail" src="{{img.standard_url | cdn}}">
+            {% endfor %}
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">More Info</h3>
+            </div>
+            <div class="panel-body">
+                {% if listing.description %}
+                <strong>Description</strong>
+                <p>{{ listing.description }}</p>
+                {% endif %}
+
+                <ul>
+                {% for detail in listing.details %}
+                    <li>{{detail.key}}: {{detail.value}}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

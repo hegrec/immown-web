@@ -1,6 +1,6 @@
 .fill-height {
     position: fixed;
-    top: 45px;
+    top: 55px;
     left: 0;
     bottom: 0;
     right: 0;
@@ -24,4 +24,158 @@
     float: left;
     overflow-y: scroll;
     max-height: 100%;
+}
+
+ul.listing-results {
+    list-style-type: none;
+    margin: 0;
+}
+
+.listing-results li {
+    height: 150px;
+    padding:5px;
+    border-bottom: 1px solid #eee;
+    background-color: #ccc;
+}
+
+.listing-results li a {
+    color: #000;
+}
+
+.listing-results li:nth-child(odd) {
+    background-color: #ddd;
+}
+
+.listing-results li .img-thumbnail {
+    position: relative;
+    background-size: cover;
+    background-position: 50%;
+    width: 140px;
+    height: 140px;
+    float:left;
+}
+
+.listing-results li .img-thumbnail .image-counter {
+    width:90px;
+    height: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 11px;
+    text-align: center;
+    background-color:rgba(0,0,0,0.6);
+    color: white;
+}
+
+.top-bar .title-area img {
+    margin-left: 32px;
+    max-height: 100%;
+}
+
+img.img-thumbnail {
+    max-width: 60px;
+    height: auto;
+}
+
+.preview-container {
+    text-align: center;
+}
+
+
+
+.hero-header {
+    height: 600px;
+    background: url(/img/hero.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.hero-header .header-focus {
+    padding-top: 75px;
+    text-align: center;
+}
+
+.hero-header .header-focus input {
+    height: 1.5em;
+    font-size: 3em;
+    display: inline;
+    width: 80%;
+    margin: 0;
+    vertical-align: top;
+}
+
+.hero-header .header-focus button {
+    width: 20%;
+    height: 4.5em;
+    margin: 0;
+}
+
+.hero-header .header-focus h2 {
+    font-weight: bold;
+    font-size: 3em;
+}
+
+.hero-header .top-bar-section ul li,
+.hero-header .top-bar-section li:not(.has-form) a:not(.button),
+.hero-header .top-bar {
+    background: none;
+}
+
+.top-bar .title-area {
+    margin-right: 4em;
+}
+
+.hero-header .top-bar-section ul li > a {
+    color: #000;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.hero-header .top-bar-section ul li > a:hover {
+    color: #333;
+}
+
+.hero-header .top-bar-section .has-form {
+    display: none;
+}
+
+@media screen and (max-width: 480px) {
+    .hero-header {
+        height: 300px;
+    }
+
+    .hero-header .header-focus h2 {
+        font-size: 1em;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero-header {
+        height: 450px;
+    }
+
+    .hero-header .header-focus h2 {
+        font-size: 2em;
+    }
+
+    .top-bar .title-area {
+        margin-right: 0;
+    }
+}
+
+.overview {
+    width: 200px;
+    height: 120px;
+}
+
+.overview .img-thumbnail {
+    background-size: cover;
+    background-position: 50%;
+    width: 120px;
+    height: 120px;
+    float: left;
 }

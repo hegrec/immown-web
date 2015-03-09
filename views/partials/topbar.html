@@ -1,7 +1,7 @@
 <nav class="top-bar" data-topbar role="navigation">
     <ul class="title-area">
         <li class="name">
-            <h1><a href="#">Immodispo</a></h1>
+            <a href="/"><img src="/img/logo.png" alt="Immown"></a>
         </li>
         <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
@@ -11,15 +11,24 @@
         <!-- Left Nav Section -->
         <ul class="left">
             <li class="has-form">
-                <div class="row collapse">
+                <form class="row collapse" action="/map/" method="post">
                     <div class="large-8 small-9 columns">
-                        <input type="text" placeholder="Find Stuff">
+                        <input type="text" name="term" placeholder="Find Stuff">
                     </div>
                     <div class="large-4 small-3 columns">
-                        <a href="#" class="alert button expand">Search</a>
+                        <button type="submit" class="button expand">Search</button>
                     </div>
-                </div>
+                </form>
             </li>
         </ul>
+<!--
+        <ul class="left">
+            <li><a href="/agents/">Agents</a></li>
+            <li><a href="/home-owners/">Homeowners</a></li>
+            <li><a href="/list-a-home/"><strong>List a Home</strong></a></li>
+            <li><a href="/login/">Login</a></li>
+            <li><a href="/sign-up/">Sign Up</a></li>
+
+        </ul>-->
     </section>
 </nav>

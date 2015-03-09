@@ -64,7 +64,7 @@ function generateListings(agencyId) {
                 };
 
                 console.log("POSTing listing to API");
-                api.post(API_HOST + "/listings", newListing, function (err, savedListing) {
+                request.server.app.api.post(API_HOST + "/listings", newListing, function (err, savedListing) {
 
                     if (err) {
                         return callback(err);
@@ -81,7 +81,7 @@ function generateListings(agencyId) {
                                 buffer: imageFileToUse
                             };
                             console.log("sending image", API_HOST + "/listings/" + savedListing.id + "/images");
-                            api.post(API_HOST + "/listings/" + savedListing.id + "/images", imageData, function (err, savedImage) {
+                            request.server.app.api.post(API_HOST + "/listings/" + savedListing.id + "/images", imageData, function (err, savedImage) {
 
                                 if (err) {
                                     return callback(err);
@@ -132,7 +132,7 @@ fs.readFile(__dirname + '/agency.jpg', function(err, data) {
 
     //console.log(newAgency);
 
-    api.post(API_HOST + "/agencies", newAgency, function (err, savedAgency) {
+    request.server.app.api.post(API_HOST + "/agencies", newAgency, function (err, savedAgency) {
 
         if (err) {
             throw new Error(err);

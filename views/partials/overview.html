@@ -1,0 +1,26 @@
+<div class="overview">
+
+    {% if listing.images | length > 0 %}
+    <div class="img-thumbnail" style="position: relative; background-image:url({{listing.images[0].standard_url | cdn}});">
+        <div style="width:70px; height: 12px; position: absolute; bottom: 0px; left: 0px; font-size: 10px; text-align: center; background-color:rgba(0,0,0,0.6); color: white;">
+            {{listing.images.length}} images
+        </div>
+    </div>
+    {% else %}
+    <a href="/listing/{{listing.id}}"><div class="img-thumbnail" style="background-size: cover; background-position: 50%; width: 90px; height: 90px; float:left;"></div></a>
+    {% endif %}
+    <a href="/listing/{{listing.id}}"><div style='padding-left: 10px; font-size: 13px;'>
+        <strong>{{listing.construction_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
+
+        <div>{{ listing.price }}€</div>
+        {% if listing.num_rooms %}
+        <div>{{ listing.num_rooms }} Rooms</div>
+        {% endif %}
+        {% if listing.total_size %}
+        <div>{{ listing.total_size }}m<sup>2</sup></div>
+        {% else %}
+        <div>&nbsp;</div>
+        {% endif %}
+        <span class="floatRight">{{ listing.town.name }}</span>
+    </a>
+</div>

@@ -2,43 +2,19 @@
 {% extends "base.html" %}
 
 {% block page %}
-    <div>
-    <nav class="top-bar" data-topbar role="navigation">
-        <ul class="title-area">
-            <li class="name">
-                <h1><a href="#">Immodispo</a></h1>
-            </li>
-            <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
-            <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-        </ul>
-
-        <section class="top-bar-section">
-            <!-- Left Nav Section -->
-            <ul class="left">
-                <li class="has-form">
-                    <div class="row collapse">
-                        <div class="large-8 small-9 columns">
-                            <input type="text" placeholder="Find Stuff">
-                        </div>
-                        <div class="large-4 small-3 columns">
-                            <a href="#" class="alert button expand">Search</a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </section>
-    </nav>
+{% include "partials/topbar.html" %}
+<div>
     <div class="fill-height">
         <div id="map-sidebar">
-            <form class="filter-form">
+            <form class="filter-form" id="js-filter-form">
+                <div class="form-group col-md-12">
+                    <input type="radio" name="rent_or_sale" id="for-sale-radio"><label for="for-sale-radio">For Sale</label>
+                    <input type="radio" name="rent_or_sale" id="for-rent-radio"><label for="for-rent-radio">For Rent</label>
+                </div>
                 <div class="row">
-                    <label class="medium-6 columns">Purchase<input type="radio" name="salerent"></label>
-                    <label class="medium-6 columns">Rent<input type="radio" name="salerent"></label>
-                 </div>
-                <div class="row">
-                    <label class="medium-4 columns">Apartment<input type="checkbox" id="search_a" name="construction"></label>
-                    <label class="medium-4 columns">House<input type="checkbox" id="search_h" name="construction"></label>
-                    <label class="medium-4 columns">Terrain<input type="checkbox" id="search_t"  name="construction"></label>
+                    <input type="checkbox" checked="checked" name="construct_type" id="search_a"><label for="search_a">Apartment</label>
+                    <input type="checkbox" checked="checked" name="construct_type" id="search_h"><label for="search_h">House</label>
+                    <input type="checkbox" checked="checked" name="construct_type" id="search_t"><label for="search_t">Terrain</label>
                 </div>
                 <div class="row">
                     <label class="medium-6 columns">Min Price<input type="text" name="minprice"></label>
@@ -52,8 +28,9 @@
                     <label class="medium-6 columns">Min Bedrooms<input type="text" name="minbed"></label>
                     <label class="medium-6 columns">Max Bedrooms<input type="text" name="maxbed"></label>
                 </div>
-
+                <button class="btn expand">Update Filter</button>
             </form>
+            <h3 class="js-result-count">Loading Results...</h3>
             <ul class="listing-results">
 
             </ul>

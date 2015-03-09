@@ -29,6 +29,10 @@ function ImmoMapIcon(options) {
     }
 }
 
+ImmoMapIcon.prototype.getId = function getId() {
+    return this.referenceObject.id;
+};
+
 ImmoMapIcon.prototype.getGoogleMapsIcon = function getGoogleMapsIcon(googleMap) {
     var self = this,
         mapIcon = {
@@ -44,7 +48,7 @@ ImmoMapIcon.prototype.getGoogleMapsIcon = function getGoogleMapsIcon(googleMap) 
         labelAnchor: new google.maps.Point(22, 0),
         labelClass: 'somecssclass',
         labelStyle: {
-            opacity: 0.95
+            opacity: 0.5
         }
     });
 

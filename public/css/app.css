@@ -6666,7 +6666,7 @@ meta.foundation-mq-topbar {
 }
 /* line 167, ../../../design/bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .top-bar .row {
-  max-width: none;
+  max-width: 1600px;
 }
 /* line 169, ../../../design/bower_components/foundation/scss/foundation/components/_top-bar.scss */
 .top-bar form,

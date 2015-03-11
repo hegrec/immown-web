@@ -3,40 +3,46 @@
 
 {% block page %}
 {% include "partials/topbar.html" %}
-<div>
-    <div class="fill-height">
-        <div id="map-sidebar">
-            <form class="filter-form" id="js-filter-form">
-                <div class="form-group col-md-12">
-                    <input type="radio" name="rent_or_sale" id="for-sale-radio"><label for="for-sale-radio">For Sale</label>
-                    <input type="radio" name="rent_or_sale" id="for-rent-radio"><label for="for-rent-radio">For Rent</label>
-                </div>
-                <div class="row">
-                    <input type="checkbox" checked="checked" name="construct_type" id="search_a"><label for="search_a">Apartment</label>
-                    <input type="checkbox" checked="checked" name="construct_type" id="search_h"><label for="search_h">House</label>
-                    <input type="checkbox" checked="checked" name="construct_type" id="search_t"><label for="search_t">Terrain</label>
-                </div>
-                <div class="row">
-                    <label class="medium-6 columns">Min Price<input type="text" name="minprice"></label>
-                    <label class="medium-6 columns">Max Price<input type="text" name="maxprice"></label>
-                </div>
-                <div class="row">
-                    <label class="medium-6 columns">Min Size<input type="text" name="minsize"></label>
-                    <label class="medium-6 columns">Max Size<input type="text" name="maxsize"></label>
-                </div>
-                <div class="row">
-                    <label class="medium-6 columns">Min Bedrooms<input type="text" name="minbed"></label>
-                    <label class="medium-6 columns">Max Bedrooms<input type="text" name="maxbed"></label>
-                </div>
-                <button class="btn expand">Update Filter</button>
-            </form>
-            <h3 class="js-result-count">Loading Results...</h3>
-            <ul class="listing-results">
-
-            </ul>
+<div id="map-sidebar">
+    <form class="filter-form" id="js-filter-form">
+        <div class="form-group col-md-12">
+            <input type="radio" name="rent_or_sale" id="for-sale-radio"><label for="for-sale-radio">For Sale</label>
+            <input type="radio" name="rent_or_sale" id="for-rent-radio"><label for="for-rent-radio">For Rent</label>
         </div>
-        <div id="map-canvas"></div>
-    </div>
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <div class="row">
+            <input type="checkbox" checked="checked" name="construct_type" id="search_a"><label for="search_a">Apartment</label>
+            <input type="checkbox" checked="checked" name="construct_type" id="search_h"><label for="search_h">House</label>
+            <input type="checkbox" checked="checked" name="construct_type" id="search_t"><label for="search_t">Terrain</label>
+        </div>
+        <div class="row">
+            <label class="medium-6 columns">Min Price<input type="text" name="minprice"></label>
+            <label class="medium-6 columns">Max Price<input type="text" name="maxprice"></label>
+        </div>
+        <div class="row">
+            <label class="medium-6 columns">Min Size<input type="text" name="minsize"></label>
+            <label class="medium-6 columns">Max Size<input type="text" name="maxsize"></label>
+        </div>
+        <div class="row">
+            <label class="medium-6 columns">Min Bedrooms<input type="text" name="minbed"></label>
+            <label class="medium-6 columns">Max Bedrooms<input type="text" name="maxbed"></label>
+        </div>
+        <button class="btn expand">Update Filter</button>
+    </form>
+    <h3 class="js-result-count">Loading Results...</h3>
+    <ul class="listing-results">
+
+    </ul>
 </div>
+<div id="map-holder">
+    <div id="map-canvas"></div>
+</div>
+<div class="icon-bar two-up" role="navigation">
+    <a class="item" aria-labelledby="#itemlabel1">
+        <label id='itemlabel1'>Map</label>
+    </a>
+    <a class="item" aria-labelledby="#itemlabel2">
+        <label id='itemlabel2'>List</label>
+    </a>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 {% endblock %}

@@ -5,10 +5,12 @@ function ImmoListing(application) {
 
     var self = this;
 
-    this.firstHeight = $("#preview-image").height();
+
 
     $('#image-container').find('img').on("mousemove",function () {
-
+        if (!self.firstHeight) {
+            self.firstHeight = $("#preview-image").height();
+        }
         var src = $(this).attr('src');
         $("#preview-image").attr('src', src);
         $("#preview-image").css('height', self.firstHeight + 'px');

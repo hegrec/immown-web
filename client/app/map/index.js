@@ -3,6 +3,8 @@ var _ = require('lodash'),
     formatters = require('./../util/formatters');
 
 function ImmoMap(application) {
+    var self = this;
+
     this.application = application;
     this.map = null;
     this.iconInfoWindow = null;
@@ -11,9 +13,33 @@ function ImmoMap(application) {
     this.currentPage = 1;
     this.markerLookup = {};
     this.createGoogleMap('map-canvas');
-
     this.setupFilterForm();
 }
+
+ImmoMap.prototype.renderBoundaries = function (doc) {
+    console.log(doc[0]);
+    _.each(doc[0].placemarks, function(placemark) {
+        var opt = {
+            fillColor: '#00ff00',
+            fillOpacity: 0.2
+        },
+        arr = placemark.polygon.getPath(),
+        bounds = new google.maps.LatLngBounds(),
+        ndx;
+
+        for (ndx = 0; ndx < arr.length; ndx++) {
+            var v = arr.getAt(ndx);
+            console.log(v);
+            var latlong = new google.maps.LatLng(v.lat(), v.lng());
+            bounds.extend(latlong);
+        }
+
+        console.log(opt);
+
+        placemark.polygon.bounds = bounds;
+        placemark.polygon.setOptions(opt);
+    });
+};
 
 ImmoMap.prototype.buildMapURL = function buildMapURL() {
     var url = '?';
@@ -137,10 +163,28 @@ ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
         }
     );
 
-    google.maps.event.addListenerOnce(this.map, 'idle', function () {
-        self.mapLoaded = true;
-        self.loadMapIcons()
+    this.geoParser = new geoXML3.parser({
+        map: self.map,
+        suppressInfoWindows: true,
+        zoom: false,
+        afterParse: function(doc) { self.renderBoundaries(doc) }
     });
+
+    google.maps.event.addListenerOnce(this.map, 'idle', function () {
+        var boundaries = '';
+        self.mapLoaded = true;
+        self.loadMapIcons();
+
+        if (self.application.moduleVars.boundaries) {
+            boundaries = '<kml><Placemark><name>a big test</name><description>test</description>'
+            + self.application.moduleVars.boundaries
+            +'</Placemark></kml>';
+
+            console.log(boundaries);
+            self.geoParser.parseKmlString(boundaries);
+        }
+    });
+
 
     google.maps.event.addListener(self.map, 'zoom_changed', function () {
         self.loadMapIcons();
@@ -219,9 +263,9 @@ ImmoMap.prototype.loadMapIcons = function() {
                 }
             });
 
-            var text = serverIcons.total + ' Listings';
-            if (serverIcons.total>serverIcons.icons.length) {
-                text += ' ('+ (serverIcons.icons.length) + ' shown)';
+            var text = serverIcons.icons.length + ' results';
+            if (serverIcons.has_more) {
+                text = serverIcons.icons.length + '+ results';
             }
 
             $('.js-result-count').text(text);
@@ -352,5 +396,5 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
     console.log(extraString);
     return "lng_east=" + lng_east + "&lat_north=" + lat_north + "&lat_south=" + lat_south + "&lng_west=" + lng_west + extraString;
 };
-http://localhost:3000/sidebar?lng_east=5.5540771484375&lat_north=49.04964295604396&lat_south=44.868601696404&lng_west=-1.5540771484375&search_a=0&search_h=0&search_t=0&page=1&zoom=7
+
 module.exports = ImmoMap;

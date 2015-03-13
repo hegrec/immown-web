@@ -57,19 +57,21 @@ module.exports = function(server) {
                 filterString;
 
             if (term) {
-                term = term.replace('-', ' ');
+                term = term.replace(/-/g, ' ');
                 filterString = "sort=-population&filter=name=" + term;
                 //build a simple sidebar with all listings in the box
+                console.log(env.API_HOST + "/towns?" + filterString);
                 request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
                     var foundTown;
 
                     if (searchResults.body.length > 0) {
                         foundTown = searchResults.body[0];
-                        console.log(foundTown);
 
                         context.seed_data.vars.lat = foundTown.latitude;
                         context.seed_data.vars.lng = foundTown.longitude;
                         context.seed_data.vars.zoom = 12;
+                        context.search_term = foundTown.name;
+                        context.seed_data.vars.boundaries = foundTown.kml;
                     }
 
                     context.seed_data = JSON.stringify(context.seed_data);
@@ -314,7 +316,7 @@ module.exports = function(server) {
 
                 var output = {
                     icons: icons,
-                    total: sidebarResults.meta.total
+                    has_more: sidebarResults.meta.total>icons.length
                 };
                 reply(output);
 

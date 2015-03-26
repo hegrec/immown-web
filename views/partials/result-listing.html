@@ -1,29 +1,73 @@
 {% for listing in listings %}
-<li class="sidebar-listing" data-id="{{listing.id}}" data-town-id="{{listing.town.id}}">
-    <a id="view_listing_{{ listing.id }}" href="/listing/{{ listing.id }}">
-            {% if listing.images | length > 0 %}
-            <div class="img-thumbnail" style="background-image:url({{listing.images[0].standard_url | cdn}});">
-                <div class="image-counter">
-                    {{listing.images|length}} images
+    <li class="sidebar-listing" data-id="{{listing.id}}" data-town-id="{{listing.town.id}}">
+        <a id="view_listing_{{ listing.id }}" href="/listing/{{ listing.id }}">
+
+        <div class="img-thumbnail" style="background-image:url({{listing.images[0].standard_url | cdn}});">
+            <ul class='sidebar-details hide-for-medium-up'>
+                {% set listing_type = 'House' %}
+
+                {% if listing.construction_type == '2' %}
+                {% set listing_type = 'Apartment' %}
+                {% endif %}
+
+                {% if listing.construction_type == '3' %}
+                {% set listing_type = 'Terrain' %}
+                {% endif %}
+                <li>
+                    <strong>{{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
+                </li>
+                <li class="sidebar-price">
+                    <div>{{ listing.price }}€</div>
+                </li>
+                <li>
+                    {% if listing.num_rooms %}
+                    <div>{{ listing.num_rooms }} Rooms</div>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if listing.total_size %}
+                    <div>{{ listing.total_size }}m<sup>2</sup></div>
+                    {% else %}
+                    <div>&nbsp;</div>
+                    {% endif %}
+                </li>
+            </ul>
+            <div class="image-counter">
+                {{listing.images|length}} images
+            </div>
+        </div>
+            <div class='show-for-medium-up'>
+                {% set listing_type = 'House' %}
+
+                {% if listing.construction_type == '2' %}
+                {% set listing_type = 'Apartment' %}
+                {% endif %}
+
+                {% if listing.construction_type == '3' %}
+                {% set listing_type = 'Terrain' %}
+                {% endif %}
+
+                <div class="sidebar-price">
+                    <strong>{{ listing.price }}€</strong>
+                </div>
+                <div>
+                    {{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}
+                </div>
+
+                <div>
+                    {% if listing.num_rooms %}
+                    <div>{{ listing.num_rooms }} Rooms</div>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if listing.total_size %}
+                    <div>{{ listing.total_size }}m<sup>2</sup></div>
+                    {% else %}
+                    <div>&nbsp;</div>
+                    {% endif %}
                 </div>
             </div>
-            {% else %}
-            <div class="img-thumbnail" style="background-size: cover; background-position: 50%; width: 90px; height: 90px; float:left;"></div>
-            {% endif %}
-            <div style='padding-left: 10px; font-size: 13px;'>
-                <strong>{{listing.construction_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
-
-                <div>{{ listing.price }}€</div>
-                {% if listing.num_rooms %}
-                <div>{{ listing.num_rooms }} Rooms</div>
-                {% endif %}
-                {% if listing.total_size %}
-                <div>{{ listing.total_size }}m<sup>2</sup></div>
-                {% else %}
-                <div>&nbsp;</div>
-                {% endif %}
-                <span class="floatRight">{{ listing.town.name }}</span>
-            </div>
+        <span class="floatRight">{{ listing.town.name }}</span>
     </a>
 </li>
 {% endfor %}

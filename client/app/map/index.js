@@ -14,6 +14,25 @@ function ImmoMap(application) {
     this.markerLookup = {};
     this.createGoogleMap('map-canvas');
     this.setupFilterForm();
+
+
+    $('.map-list .list').on('click', function(evt, target) {
+
+        $(this).addClass('active');
+        $('.map-list .map').removeClass('active');
+
+        $('#map-holder').css('display', 'none');
+        $('#map-sidebar').css('display', 'block');
+    });
+
+    $('.map-list .map').on('click', function(evt, target) {
+
+        $(this).addClass('active');
+        $('.map-list .list').removeClass('active');
+
+        $('#map-holder').css('display', 'block');
+        $('#map-sidebar').css('display', 'none');
+    });
 }
 
 ImmoMap.prototype.renderBoundaries = function (doc) {

@@ -48,7 +48,7 @@ Immodispo.prototype.start = function () {
         if (isSearchMenuOpen == false)
         {
             $(".menu_mobile_app.search").addClass('open');
-            setTimeout(function() {$(".menu_mobile_app.search input").focus();}, 100);
+            setTimeout(function() {$(".menu_mobile_app.search input").focus();}, 250);
             isSearchMenuOpen = true;
         }
     });

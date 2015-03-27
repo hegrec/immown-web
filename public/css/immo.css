@@ -5,6 +5,10 @@
     height: 100%;
 }
 
+#map-canvas img {
+    max-width: none;
+}
+
 #map-holder {
     position: fixed;
     left: 0;
@@ -568,7 +572,7 @@ h3.js-result-count {
 
 .overview {
     width: 200px;
-    height: 120px;
+    height: 130px;
 }
 
 .overview .img-thumbnail {

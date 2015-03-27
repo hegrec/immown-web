@@ -42,7 +42,7 @@ function ImmoMap(application) {
             $(".menu_mobile_app.filter-form").addClass('open');
             $('#grey_back').addClass('open');
 
-            setTimeout(function() {$(".menu_mobile_app.filter-form input[type='text']:first").focus();}, 100);
+            setTimeout(function() {$(".menu_mobile_app.filter-form input[type='text']:first").focus();}, 250);
             self.mobileFilterOpen = true;
         }
     });
@@ -52,6 +52,7 @@ function ImmoMap(application) {
         if (self.mobileFilterOpen == true)
         {
             $(".menu_mobile_app.filter-form").removeClass('open');
+            $('.js-filter-form input').blur();
             $('#grey_back').removeClass('open');
             self.mobileFilterOpen = false;
         }
@@ -312,7 +313,7 @@ ImmoMap.prototype.loadMapIcons = function() {
                     googleMarker = mapMarker.getGoogleMapsIcon(self.map);
 
                     google.maps.event.addListener(googleMarker, "click", function (e) {
-                        self.loadListingOverviewToInfoWindow(this.id)
+                        self.loadListingOverviewToInfoWindow(mapMarker.getId())
                     });
                     self.markerLookup[mapMarker.getId()] = mapMarker;
                     iconCache[hash] = mapMarker;

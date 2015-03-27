@@ -216,6 +216,31 @@ module.exports = function(server) {
             filterString = filterString + '&filter=total_size<'+request.query['max_size'];
         }
 
+        if (request.query['search_a'] == 1
+            || request.query['search_a'] == 1
+            || request.query['search_t'] == 1
+           ) {
+            var typeIncludes = [];
+
+            if (request.query['search_a'] == 1) {
+                typeIncludes.push(2);
+            }
+
+            if (request.query['search_h'] == 1) {
+                typeIncludes.push(1);
+            }
+
+            if (request.query['search_t'] == 1) {
+                typeIncludes.push(3);
+            }
+
+            filterString = filterString + '&filter=construction_type|IN|' + typeIncludes.join(',');
+        }
+
+
+
+            console.log(filterString);
+
         return filterString;
     }
 

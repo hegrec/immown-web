@@ -30,36 +30,44 @@ Immodispo.prototype.start = function () {
     }
 
 
-    var isMenuOpen = false;
+    var isMenuOpen = false,
+        isSearchMenuOpen = false;
 
     $('.menu_btn').click(function()
     {
         if (isMenuOpen == false)
         {
-            $("#menu_smartphone").clearQueue().animate({
-                left : '0px'
-            })
-            $("#grey_back").fadeIn('fast');
-            $(this).fadeOut(200);
-            $(".close").fadeIn(300);
-
+            $("#menu_smartphone").addClass('open');
+            $('#grey_back').addClass('open');
             isMenuOpen = true;
         }
     });
+
+    $('.search_btn').click(function()
+    {
+        if (isSearchMenuOpen == false)
+        {
+            $(".menu_mobile_app.search").addClass('open');
+            setTimeout(function() {$(".menu_mobile_app.search input").focus();}, 100);
+            isSearchMenuOpen = true;
+        }
+    });
+
+    $('.menu_mobile_app.search .back_btn').click(function()
+    {
+        if (isSearchMenuOpen == true)
+        {
+            $(".menu_mobile_app.search").removeClass('open');
+            isSearchMenuOpen = false;
+        }
+    });
+
     $('#grey_back').click(function()
     {
         if (isMenuOpen == true)
         {
-            $("#menu_smartphone").clearQueue().animate({
-                left : '-570px'
-            })
-            $("#page").clearQueue().animate({
-                "margin-left" : '0px'
-            })
-            $("#grey_back").fadeOut('fast');
-            $(this).fadeOut(200);
-            $(".menu_btn").fadeIn(300);
-
+            $("#menu_smartphone").removeClass('open');
+            $('#grey_back').removeClass('open');
             isMenuOpen = false;
         }
     });

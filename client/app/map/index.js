@@ -11,6 +11,7 @@ function ImmoMap(application) {
     this.mapLoaded = false;
     this.rentalMode = false;
     this.currentPage = 1;
+    this.mobileFilterOpen = false;
     this.markerLookup = {};
     this.createGoogleMap('map-canvas');
     this.setupFilterForm();
@@ -32,6 +33,38 @@ function ImmoMap(application) {
 
         $('#map-holder').css('display', 'block');
         $('#map-sidebar').css('display', 'none');
+    });
+
+    $('.filter_btn').click(function()
+    {
+        if (self.mobileFilterOpen == false)
+        {
+            $(".menu_mobile_app.filter-form").addClass('open');
+            $('#grey_back').addClass('open');
+
+            setTimeout(function() {$(".menu_mobile_app.filter-form input[type='text']:first").focus();}, 100);
+            self.mobileFilterOpen = true;
+        }
+    });
+
+    $('.js-filter-form button[type="submit"]').click(function()
+    {
+        if (self.mobileFilterOpen == true)
+        {
+            $(".menu_mobile_app.filter-form").removeClass('open');
+            $('#grey_back').removeClass('open');
+            self.mobileFilterOpen = false;
+        }
+    });
+
+    $('#grey_back').click(function()
+    {
+        if (self.mobileFilterOpen == true)
+        {
+            $(".menu_mobile_app.filter-form").removeClass('open');
+            $('#grey_back').removeClass('open');
+            self.mobileFilterOpen = false;
+        }
     });
 }
 
@@ -98,7 +131,7 @@ ImmoMap.prototype.updateMapURL = function updateMapURL() {
 ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
     var self = this;
 
-    $("#js-filter-form").on('submit', function(evt) {
+    $(".js-filter-form").on('submit', function(evt) {
 
         self.clearMarkers();
         self.loadMapIcons();
@@ -267,20 +300,29 @@ ImmoMap.prototype.loadMapIcons = function() {
         dataType: "json",
         success: function (serverIcons) {
             self.clearMarkersOffScreen();
+            var iconCache = {},
+                count = 0;
             _.each(serverIcons.icons, function(serverIcon) {
                 var mapMarker = self.buildMapIcon(serverIcon),
-                    googleMarker;
+                    googleMarker,
+                    hash = mapMarker.getLat() + ':' + mapMarker.getLng();
 
-                if (!self.mapIconExists(mapMarker)) {
+
+                if (!self.mapIconExists(mapMarker) && !iconCache[hash]) {
                     googleMarker = mapMarker.getGoogleMapsIcon(self.map);
 
                     google.maps.event.addListener(googleMarker, "click", function (e) {
                         self.loadListingOverviewToInfoWindow(this.id)
                     });
                     self.markerLookup[mapMarker.getId()] = mapMarker;
-                    self.markers.push(mapMarker)
+                    iconCache[hash] = mapMarker;
+                    self.markers.push(mapMarker);
+                    count++;
                 }
+
             });
+
+            console.log(count, serverIcons.icons.length);
 
             var text = serverIcons.icons.length + ' results';
             if (serverIcons.has_more) {
@@ -331,6 +373,7 @@ ImmoMap.prototype.loadListingOverviewToInfoWindow = function loadListingOverview
 
 ImmoMap.prototype.loadPaginatedWidget = function loadPaginatedWidget() {
     var self = this,
+
         queryString = self.buildQueryString();
 
     $.ajax({
@@ -363,7 +406,8 @@ ImmoMap.prototype.loadPaginatedWidget = function loadPaginatedWidget() {
 };
 
 ImmoMap.prototype.buildQueryString = function buildQueryString() {
-    var zoom = this.map.getZoom(),
+    var self = this,
+        zoom = this.map.getZoom(),
         bounds = this.map.getBounds(),
         lng_east = bounds.getNorthEast().lng(),
         lat_north = bounds.getNorthEast().lat(),
@@ -371,12 +415,27 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
         lng_west = bounds.getSouthWest().lng(),
         searchValues = {},
         extraString = '',
-        min_price = Number($('input[name="minprice"]').val()),
-        max_price = Number($('input[name="maxprice"]').val()),
-        min_surface = Number($('input[name="minsize"]').val()),
-        max_surface = Number($('input[name="maxsize"]').val()),
-        min_bedroom = Number($('input[name="minbed"]').val()),
-        max_bedroom = Number($('input[name="maxbed"]').val());
+        sidebar = $('#map-sidebar'),
+        min_price,
+        max_price,
+        min_surface,
+        max_surface,
+        min_bedroom,
+        max_bedroom,
+        search_a,
+        search_h,
+        search_t;
+
+        if (sidebar.css('display') == 'none') {
+            sidebar = $('.menu_mobile_app.filter-form');
+        }
+
+        min_price = Number(sidebar.find('input[name="minprice"]').val()),
+        max_price = Number(sidebar.find('input[name="maxprice"]').val()),
+        min_surface = Number(sidebar.find('input[name="minsize"]').val()),
+        max_surface = Number(sidebar.find('input[name="maxsize"]').val()),
+        min_bedroom = Number(sidebar.find('input[name="minbed"]').val()),
+        max_bedroom = Number(sidebar.find('input[name="maxbed"]').val());
 
     if (this.rentalMode) {
         searchValues["rental"] = 1
@@ -384,35 +443,40 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
     }
 
     if (min_price)
-        searchValues["min_price"] = min_price
+        searchValues["min_price"] = min_price;
 
     if (max_price)
-        searchValues["max_price"] = max_price
+        searchValues["max_price"] = max_price;
 
 
     if (min_surface)
-        searchValues["min_size"] = min_surface
+        searchValues["min_size"] = min_surface;
 
     if (max_surface)
-        searchValues["max_size"] = max_surface
+        searchValues["max_size"] = max_surface;
 
 
     if (min_bedroom)
-        searchValues["min_bedroom"] = min_bedroom
+        searchValues["min_bedroom"] = min_bedroom;
 
     if (max_bedroom)
-        searchValues["max_bedroom"] = max_bedroom
+        searchValues["max_bedroom"] = max_bedroom;
 
-    searchValues["search_a"] = $("#search_a").is(':checked') ? 1 : 0;
-    searchValues["search_h"] = $("#search_h").is(':checked') ? 1 : 0;
-    searchValues["search_t"] = $("#search_t").is(':checked') ? 1 : 0;
+    search_a = sidebar.find('.search_a');
+    search_h = sidebar.find('.search_h');
+    search_t = sidebar.find('.search_t');
+
+    searchValues["search_a"] = search_a.is(':checked') ? 1 : 0;
+    searchValues["search_h"] = search_h.is(':checked') ? 1 : 0;
+    searchValues["search_t"] = search_t.is(':checked') ? 1 : 0;
+
     searchValues["page"] = this.currentPage;
     searchValues["zoom"] = zoom;
 
     _.forOwn(searchValues, function(searchProperty, key) {
         extraString += "&" + key + "=" + searchProperty
     });
-    console.log(extraString);
+
     return "lng_east=" + lng_east + "&lat_north=" + lat_north + "&lat_south=" + lat_south + "&lng_west=" + lng_west + extraString;
 };
 

@@ -33,6 +33,14 @@ ImmoMapIcon.prototype.getId = function getId() {
     return this.referenceObject.id;
 };
 
+ImmoMapIcon.prototype.getLat = function () {
+    return this.latitude;
+};
+
+ImmoMapIcon.prototype.getLng = function () {
+    return this.longitude;
+};
+
 ImmoMapIcon.prototype.getGoogleMapsIcon = function getGoogleMapsIcon(googleMap) {
     var self = this,
         mapIcon = {

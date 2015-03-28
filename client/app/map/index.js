@@ -12,6 +12,9 @@ function ImmoMap(application) {
     this.rentalMode = false;
     this.currentPage = 1;
     this.mobileFilterOpen = false;
+    this.ajaxIconRequest = null;
+    this.ajaxSidebarRequest = null;
+    this.ajaxOverviewRequest = null;
     this.markerLookup = {};
     this.createGoogleMap('map-canvas');
     this.setupFilterForm();
@@ -70,7 +73,6 @@ function ImmoMap(application) {
 }
 
 ImmoMap.prototype.renderBoundaries = function (doc) {
-    console.log(doc[0]);
     _.each(doc[0].placemarks, function(placemark) {
         var opt = {
             fillColor: '#00ff00',
@@ -82,12 +84,9 @@ ImmoMap.prototype.renderBoundaries = function (doc) {
 
         for (ndx = 0; ndx < arr.length; ndx++) {
             var v = arr.getAt(ndx);
-            console.log(v);
             var latlong = new google.maps.LatLng(v.lat(), v.lng());
             bounds.extend(latlong);
         }
-
-        console.log(opt);
 
         placemark.polygon.bounds = bounds;
         placemark.polygon.setOptions(opt);
@@ -165,16 +164,15 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
         $('input[name="maxsize"]').val(paramKeys['max-size']);
     }
 
-    $(".filter-purchase-rent").on('click', function () {
-        if ($(this).attr("id") == 'filter-rent') {
-            self.rentalMode = true;
-            $('#filter-purchase').addClass('secondary');
-        } else {
-            self.rentalMode = false;
-            $('#filter-rent').addClass('secondary');
-        }
+    if (paramKeys['rent']) {
+        $("input[name='rent_or_sale'][value='rent']").prop('checked', true);
+        self.rentalMode = true;
+    } else {
+        $("input[name='rent_or_sale'][value='sale']").prop('checked', true);
+    }
 
-        $(this).removeClass('secondary');
+    $("input[name='rent_or_sale']").on('change', function () {
+        self.rentalMode = $(this).val() == 'rent';
 
         self.clearMarkers();
         self.loadMapIcons();
@@ -233,7 +231,6 @@ ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
             + self.application.moduleVars.boundaries
             +'</Placemark></kml>';
 
-            console.log(boundaries);
             self.geoParser.parseKmlString(boundaries);
         }
     });
@@ -296,7 +293,12 @@ ImmoMap.prototype.loadMapIcons = function() {
     self.loadPaginatedWidget();
 
     var extraString = self.buildQueryString();
-    $.ajax({
+
+    if (!_.isNull(self.ajaxIconRequest)) {
+        self.ajaxIconRequest.abort();
+    }
+
+    self.ajaxIconRequest = $.ajax({
         url: "/icons?" + extraString,
         dataType: "json",
         success: function (serverIcons) {
@@ -323,8 +325,6 @@ ImmoMap.prototype.loadMapIcons = function() {
 
             });
 
-            console.log(count, serverIcons.icons.length);
-
             var text = serverIcons.icons.length + ' results';
             if (serverIcons.has_more) {
                 text = serverIcons.icons.length + '+ results';
@@ -337,7 +337,7 @@ ImmoMap.prototype.loadMapIcons = function() {
 
 ImmoMap.prototype.mapIconExists = function mapIconExists(mapIcon) {
     return this.markerLookup[mapIcon.getId()];
-}
+};
 
 ImmoMap.prototype.buildMapIcon = function buildMapIcon(serverIcon) {
     var options = {
@@ -364,7 +364,11 @@ ImmoMap.prototype.loadListingOverviewToInfoWindow = function loadListingOverview
 
     self.iconInfoWindow.open(self.map, marker.getMarker());
 
-    $.ajax({
+    if (!_.isNull(self.ajaxOverviewRequest)) {
+        self.ajaxOverviewRequest.abort();
+    }
+
+    self.ajaxOverviewRequest = $.ajax({
         url: "/overview?id=" + listingId,
         success: function (overviewHTML) {
             self.iconInfoWindow.setContent(overviewHTML);
@@ -377,7 +381,11 @@ ImmoMap.prototype.loadPaginatedWidget = function loadPaginatedWidget() {
 
         queryString = self.buildQueryString();
 
-    $.ajax({
+    if (!_.isNull(self.ajaxSidebarRequest)) {
+        self.ajaxSidebarRequest.abort();
+    }
+
+    self.ajaxSidebarRequest = $.ajax({
         url: "/sidebar?" + queryString,
         success: function (obj) {
             var listingResults = $('.listing-results'),

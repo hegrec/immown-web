@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     path = require('path'),
+    async = require('async'),
     env = require('../env');
 
 module.exports = function(server) {
@@ -53,31 +54,49 @@ module.exports = function(server) {
                         module: "map",
                         vars: request.query
                     }
-                },
-                filterString;
+                };
 
             if (term) {
-                term = term.replace(/-/g, ' ');
-                filterString = "sort=-population&filter=name=" + term;
-                //build a simple sidebar with all listings in the box
-                console.log(env.API_HOST + "/towns?" + filterString);
-                request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
-                    var foundTown;
+                async.parallel([
+                    function (cb) {
+                        term = term.replace(/\s/g, '-');
+                        var filterString = "filter=name=" + term;
+                        request.server.app.api.get(env.API_HOST + "/departments?" + filterString, function (err, searchResults) {
+                            cb(err, searchResults);
+                        });
+                    },
+                    function (cb) {
+                        term = term.replace(/-/g, ' ');
+                        var filterString = "sort=-population&filter=name=" + term;
+                        request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
+                            cb(err, searchResults);
+                        });
+                    }
+                ], function (err, results) {
+                    var searchResults = results[0],
+                        found,
+                        zoom = 9;
+
+                    //try department first, then go for town if not found
+                    if (searchResults.body.length == 0) {
+                        searchResults = results[1];
+                        zoom = 12;
+                    }
+
 
                     if (searchResults.body.length > 0) {
-                        foundTown = searchResults.body[0];
+                        found = searchResults.body[0];
 
-                        context.seed_data.vars.lat = foundTown.latitude;
-                        context.seed_data.vars.lng = foundTown.longitude;
-                        context.seed_data.vars.zoom = 12;
-                        context.search_term = foundTown.name;
-                        context.seed_data.vars.boundaries = foundTown.kml;
+                        context.seed_data.vars.lat = found.latitude;
+                        context.seed_data.vars.lng = found.longitude;
+                        context.seed_data.vars.zoom = zoom;
+                        context.search_term = found.name;
+                        context.seed_data.vars.boundaries = found.kml;
                     }
 
                     context.seed_data = JSON.stringify(context.seed_data);
 
                     reply.render("map.html", context);
-
                 });
             } else {
                 context.seed_data = JSON.stringify(context.seed_data);
@@ -90,21 +109,41 @@ module.exports = function(server) {
         method: 'POST',
         path: '/map/',
         handler: function (request, reply) {
-            var term = request.payload.term,
-                filterString = "sort=-population&filter=name~>" + term;
+            var term = request.payload.term;
 
             if (!term) {
                 return reply.redirect('/map/');
             }
-            //build a simple sidebar with all listings in the box
-            request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
-                var foundTown;
+
+            async.parallel([
+                function (cb) {
+                    term = term.replace(/\s/g, '-');
+                    var filterString = "filter=name~>" + term;
+                    request.server.app.api.get(env.API_HOST + "/departments?" + filterString, function (err, searchResults) {
+                        cb(err, searchResults);
+                    });
+                },
+                function (cb) {
+                    term = term.replace(/-/g, ' ');
+                    var filterString = "sort=-population&filter=name~>" + term;
+                    request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
+                        cb(err, searchResults);
+                    });
+                }
+            ], function (err, results) {
+                var searchResults = results[0],
+                    found;
+
+                //try department first, then go for town if not found
+                if (searchResults.body.length == 0) {
+                    searchResults = results[1];
+                }
 
                 if (err) {
                     reply(err);
                 } else if (searchResults.body.length > 0){
-                    foundTown = searchResults.body[0].name.toLowerCase().replace(/\s/g, '-');
-                    reply.redirect('/map/' + foundTown);
+                    found = searchResults.body[0].name.toLowerCase().replace(/\s/g, '-');
+                    reply.redirect('/map/' + found);
                 } else {
                     reply.redirect('/map/');
                 }
@@ -238,10 +277,6 @@ module.exports = function(server) {
 
             filterString = filterString + '&filter=construction_type|IN|' + typeIncludes.join(',');
         }
-
-
-
-            console.log(filterString);
 
         return filterString;
     }

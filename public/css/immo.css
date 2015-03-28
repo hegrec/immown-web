@@ -13,6 +13,11 @@
     height: 300px;
 }
 
+.swiper-button-next.swiper-button-disabled,
+.swiper-button-prev.swiper-button-disabled{
+    opacity: 0.05;
+}
+
 .listing-content {
     padding-top: 55px;
 }

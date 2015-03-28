@@ -172,15 +172,17 @@ module.exports = function(server) {
                 var context = {
                     listing: listingResult.body[0],
                     similars: [],
-                    seed_data: JSON.stringify({
+                    seed_data: {
                         module: "listing",
-                        vars: request.query
-                    })
+                        vars: {}
+                    }
                 };
 
-                console.log(context.listing);
+                context.seed_data.vars.lat = listingResult.body[0].latitude;
+                context.seed_data.vars.lng = listingResult.body[0].longitude;
+                context.seed_data = JSON.stringify(context.seed_data);
+
                 reply.render("listing.html", context);
-                //reply(context);
             });
         }
     });

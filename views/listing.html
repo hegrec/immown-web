@@ -9,9 +9,9 @@
         </form>
     </div>
 </div>
-<nav class="top-bar" data-topbar role="navigation">
+<nav class="top-bar listing" data-topbar role="navigation">
 
-    <ul class="mobile-more left hide-for-medium-up">
+    <ul class="mobile-more left hide-for-large-up">
         <li>
             <a class="menu_btn" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></a>
         </li>
@@ -22,8 +22,6 @@
             <a href="/"><img src="/img/logo.png" alt="Immown"></a>
         </li>
     </ul>
-
-
     <ul class="mobile-more right hide-for-medium-up">
         <li>
             <a class="search_btn" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></a>
@@ -35,7 +33,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </li>
     </ul>
-
     <section class="top-bar-section hide-for-small-down">
         <!-- Left Nav Section -->
         <ul class="left">
@@ -45,6 +42,11 @@
                     <button class="search-submitter"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
                 </form>
             </li>
+        </ul>
+    </section>
+    <section class="top-bar-section hide-for-medium-down">
+        <!-- Left Nav Section -->
+        <ul class="left">
             <li><a href="/agents/">Agents</a></li>
             <li><a href="/home-owners/">Homeowners</a></li>
             <li><a href="/list-a-home/"><strong>List a Home</strong></a></li>
@@ -52,42 +54,103 @@
             <li><a href="/sign-up/">Sign Up</a></li>
         </ul>
     </section>
-
 </nav>
-<div class="row">
-    <div class="medium-3 columns">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="floatRight" id="listingPriceText"><strong>{{ listing.price }}€ {% if listing.is_rental %}monthly{% endif %}</strong></div>
-                <p class="lead">{% if listing.is_rental %}For rent{% else %}For sale{% endif %}</p>
-                {% if listing.num_bedrooms %}
+<div class="listing-content">
+    <div class="row">
+        <div class="medium-9 columns">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    {% for img in listing.images %}
+                    <div class="swiper-slide">
+                        <img data-src="{{img.standard_url | cdn}}" class="swiper-lazy">
+                        <div class="swiper-lazy-preloader swiper-lazy-preloader-black"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination swiper-pagination-black"></div>
+                <!-- Navigation -->
+                <div class="swiper-button-next swiper-button-black"></div>
+                <div class="swiper-button-prev swiper-button-black"></div>
+            </div>
+        </div>
+        <div class="medium-3 columns">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h5>{{listing.town.name}}</h5>
+
+                    {% set listing_type = 'House' %}
+
+                    {% if listing.construction_type == '2' %}
+                    {% set listing_type = 'Apartment' %}
+                    {% endif %}
+
+                    {% if listing.construction_type == '3' %}
+                    {% set listing_type = 'Terrain' %}
+                    {% endif %}
+
+                    <div class="right" id="listingPriceText"><strong>{{ listing.price }}€ {% if listing.is_rental %}monthly{% endif %}</strong></div>
+                    <p class="lead">{{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</p>
+                    {% if listing.num_bedrooms %}
+                    <div class="right">
+                        {{listing.num_bathrooms}}  bath
+                    </div>
                     <div>
                         {{listing.num_bedrooms}}  bed
                     </div>
-                {% endif %}
-                {% if listing.num_bathrooms %}
-                    <div>
-                        {{listing.num_bathrooms}}  bath
-                    </div>
-                {% endif %}
-                {% if listing.total_surface %}
+                    {% endif %}
+                    {% if listing.num_bathrooms %}
+
+                    {% endif %}
+                    {% if listing.total_surface %}
                     <div>
                         Interior Size: {{listing.total_surface}}m<sup>2</sup>
                     </div>
-                {% endif %}
-                {% if listing.land_surface %}
+                    {% endif %}
+                    {% if listing.land_surface %}
                     <div>
                         Lot Size: {{listing.land_surface}}m<sup>2</sup>
                     </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="panel panel-default visible-md visible-lg">
-            <div class="panel-heading">
-                <h3 class="panel-title">Agency</h3>
+    </div>
+    <div class="row">
+        <div class="medium-9 columns">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Information</h3>
+                </div>
+                <div class="panel-body listing-info">
+                    {% if listing.description %}
+                    <p>{{ listing.description }}</p>
+                    {% endif %}
+                    <ul>
+                        {% for detail in listing.details %}
+                        {% if detail.value != 'yes' %}
+                        <li>{{detail.key}}: {{detail.value}}</li>
+                        {% endif %}
+                        {% endfor %}
+                        <li>
+                            Other:
+                            {% for detail in listing.details %}
+                            {% if detail.value == 'yes' %}
+                            {{detail.key}}{%if not loop.last %},{% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="panel-body">
-                {% if listing.agency %}
+        </div>
+        <div class="medium-3 columns">
+            <div class="panel panel-default visible-md visible-lg">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Agency</h3>
+                </div>
+                <div class="panel-body">
+                    {% if listing.agency %}
                     <div>{{listing.agency.name}}</div>
                     {% if listing.agency.image.indexOf("null") == -1 %}
                     <img src="{{listing.agency.image | cdn}}" class="img img-thumbnail img-responsive">
@@ -100,65 +163,57 @@
                         </button>
                     </form>
                     {% endif %}
-                {% endif %}
-                <a href="{{listing.listing_url}}" target="_blank">
-                    <button type="button" id="website_view" class="btn btn-default btn-block">
-                        <span class="glyphicon glyphicon-globe"></span> View Original Listing
-                    </button>
-                </a>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Similar Listings</h3>
-            </div>
-            <div class="panel-body">
-                {% for sim in similars %}
-                <div>
-                    <a id="view_listing_{{ sim.id }}" href="/listing/{{ sim.id }}">
-                        <div class="img-thumbnail" style="background-image:url(/cdn/listing_images/{{sim.images[0].standard_url}});">
-                            {{sim.images | length}} images
-                        </div>
-                        <div>
-                            <span class="floatRight">{{ sim.town.town_name }}</span>
-                            <div>{{ sim.price }}€</div>
-                            {% if sim.num_rooms %}
-                                <div>{{ sim.num_rooms }} Rooms</div>
-                            {% endif %}
-                        </div>
+                    {% endif %}
+                    <a href="{{listing.listing_url}}" target="_blank">
+                        <button type="button" id="website_view" class="btn btn-default btn-block">
+                            <span class="glyphicon glyphicon-globe"></span> View Original Listing
+                        </button>
                     </a>
                 </div>
-                {% endfor %}
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Similar Listings</h3>
+                </div>
+                <div class="panel-body">
+                    {% for sim in similars %}
+                    <div>
+                        <a id="view_listing_{{ sim.id }}" href="/listing/{{ sim.id }}">
+                            <div class="img-thumbnail" style="background-image:url(/cdn/listing_images/{{sim.images[0].standard_url}});">
+                                {{sim.images | length}} images
+                            </div>
+                            <div>
+                                <span class="right">{{ sim.town.town_name }}</span>
+                                <div>{{ sim.price }}€</div>
+                                {% if sim.num_rooms %}
+                                <div>{{ sim.num_rooms }} Rooms</div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-    <div class="medium-9 columns">
-        <div class="preview-container">
-            <img id="preview-image" src="{{listing.images[0].standard_url | cdn}}" alt="Listing image">
-        </div>
-        <div id="image-container">
-            {% for img in listing.images %}
-            <img class="img-thumbnail" src="{{img.standard_url | cdn}}">
-            {% endfor %}
-        </div>
+    <div class="row">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">More Info</h3>
+                <h3 class="panel-title">Nearby</h3>
             </div>
-            <div class="panel-body">
-                {% if listing.description %}
-                <strong>Description</strong>
-                <p>{{ listing.description }}</p>
-                {% endif %}
+            <div class="panel-body listing-map">
+                <div id="map-canvas"></div>
+            </div>
+        </div>
 
-                <ul>
-                {% for detail in listing.details %}
-                    <li>{{detail.key}}: {{detail.value}}</li>
-                {% endfor %}
-                </ul>
-            </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12">
+            Copyright 2015 Immown
         </div>
     </div>
 </div>
-
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="/js/vendor/swiper.min.js"></script>
 {% endblock %}

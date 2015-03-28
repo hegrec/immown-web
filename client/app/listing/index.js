@@ -1,80 +1,62 @@
 var _ = require('lodash');
+    MapIcon = require('./../map/helper/MapIcon'),
     formatters = require('./../util/formatters');
 
 function ImmoListing(application) {
 
-    var self = this;
+    var self = this,
+        defaultLat = 47,
+        defaultLng = 2,
+        defaultZoom = 7;
 
 
 
-    $('#image-container').find('img').on("mousemove",function () {
-        if (!self.firstHeight) {
-            self.firstHeight = $("#preview-image").height();
-        }
-        var src = $(this).attr('src');
-        $("#preview-image").attr('src', src);
-        $("#preview-image").css('height', self.firstHeight + 'px');
-        $("#preview-image").css('width', 'auto');
+
+    this.application = application;
+
+    this.swiper = new Swiper('.swiper-container', {
+        nextButton: '.swiper-button-next',
+
+        prevButton: '.swiper-button-prev',
+        pagination: '.swiper-pagination',
+        paginationClickable: true,
+        // Disable preloading of all images
+        preloadImages: false,
+        // Enable lazy loading
+        lazyLoading: true,
+        lazyLoadingInPrevNext: true
     });
+
+
+    if (this.application.moduleVars.lat) {
+        defaultLat = this.application.moduleVars.lat;
+    }
+
+    if (this.application.moduleVars.lng) {
+        defaultLng = this.application.moduleVars.lng;
+    }
+
+
+
+    this.map = new google.maps.Map(document.getElementById('map-canvas'),
+        {
+            zoom: 12,
+            disableDefaultUI: true,
+            minZoom: 10,
+            center: new google.maps.LatLng(defaultLat, defaultLng),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+    );
+
+    var options = {
+        latitude: defaultLat,
+        longitude: defaultLng,
+        image: '/img/icon.png',
+        referenceObject: {}
+    };
+
+    var icon =  new MapIcon(options);
+    icon.getGoogleMapsIcon(self.map);
 }
 
 module.exports = ImmoListing;
-
-/*
-setEnergyRating($("#dpeMark").text())
-
-
-
-$("#telephone_form").submit(function(evt){
-
-
-    $.get("/feed/?agency_telephone="+$("#agency_id").val(),function(result) {
-
-        $("#phone_submit").html("<span class=\"glyphicon glyphicon-earphone\"></span>"+result)
-        $("#phone_submit").attr("disabled","disabled")
-    });
-    return false;
-});
-
-
-var currentImage = 1;
-$("#prev_img").click(function(evt){
-    setActiveImage(currentImage-1)
-});
-$("#next_img").click(function(evt){
-    setActiveImage(currentImage+1)
-});
-
-function setActiveImage(imgNumber)
-{
-
-
-    if (imgNumber>$("#image_container div").length)
-        imgNumber = 1
-    else if (imgNumber<1)
-        imgNumber = $("#image_container div").length
-
-    currentImage = imgNumber
-    var newImage = $("#image_container div:nth-child("+currentImage+")" ).attr("data-img");
-    $("#bigimage").css("background-image","url('"+newImage+"')")
-
-}
-
-function setEnergyRating(iRating)
-{
-    $("#dpeMark").text(iRating);
-    if (iRating>450)
-        $("#dpeMark").attr("class","dpe_g");
-    else if (iRating>=331)
-        $("#dpeMark").attr("class","dpe_f");
-    else if (iRating>=231)
-        $("#dpeMark").attr("class","dpe_e");
-    else if (iRating>=151)
-        $("#dpeMark").attr("class","dpe_d");
-    else if (iRating>=91)
-        $("#dpeMark").attr("class","dpe_c");
-    else if (iRating>=50)
-        $("#dpeMark").attr("class","dpe_b");
-    else
-        $("#dpeMark").attr("class","dpe_a");
-}*/

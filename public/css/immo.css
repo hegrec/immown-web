@@ -9,6 +9,14 @@
     max-width: none;
 }
 
+.listing-map {
+    height: 300px;
+}
+
+.listing-content {
+    padding-top: 55px;
+}
+
 #map-holder {
     position: fixed;
     left: 0;
@@ -135,13 +143,20 @@ ul.listing-results {
     height: 33%;
 }
 
-img.img-thumbnail {
-    max-width: 60px;
-    height: auto;
+.top-bar.listing {
+    position: fixed;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-.preview-container {
+.swiper-slide {
     text-align: center;
+    position: relative;
+}
+
+.listing-info ul,
+.listing-info p {
+    font-size: 0.9rem
 }
 
 .hero-header {
@@ -254,6 +269,7 @@ button.search-submitter {
 
 .top-bar button.search-submitter {
     position: absolute;
+    top: 0;
     padding-top: 6px;
     width: 37px;
     height: 37px;
@@ -359,8 +375,9 @@ h3.js-result-count {
     background:#ffffff;
     top:0;
     bottom:0;
-    left:-70%;
-    width:70%;
+    left:-300px;
+    width:300px;
+    max-width: 70%;
     z-index:9999;
     -webkit-transition: left 0.2s ease-out;
     -moz-transition: left 0.2s ease-out;
@@ -500,6 +517,16 @@ h3.js-result-count {
     fill: black;
 }
 
+.top-bar .top-bar-section {
+    display: block;
+}
+
+.top-bar .top-bar-section ul {
+    display: inline;
+    width: auto;
+}
+
+
 @media screen and (min-width: 40.063em) {
     #map-sidebar {
         width: 450px;
@@ -543,9 +570,7 @@ h3.js-result-count {
         bottom: 0;
     }
 
-    .top-bar .top-bar-section {
-        display: block;
-    }
+
 
     .top-bar .has-form input[type='text'] {
         width:300px;
@@ -567,6 +592,10 @@ h3.js-result-count {
 @media screen and (min-width: 64.063em) {
     .top-bar .title-area img {
         height: 75%;
+    }
+
+    .top-bar button.search-submitter {
+        top: 0.53125rem;
     }
 }
 

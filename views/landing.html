@@ -27,24 +27,97 @@
                         <button type="submit" class="search-submitter"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
                     </form>
                 </li>
-                <li><a href="/agents/">Agents</a></li>
-                <li><a href="/home-owners/">Homeowners</a></li>
-                <li><a href="/list-a-home/"><strong>List a Home</strong></a></li>
-                <li><a href="/login/">Login</a></li>
-                <li><a href="/sign-up/">Sign Up</a></li>
+            </ul>
+        </section>
+        <section class="top-bar-section hide-for-medium-down">
+            <!-- Left Nav Section -->
+            <ul class="left">
+                <li><a href="/map/">Browse Homes</a></li>
+                <li><a href="/map/?rent=1">Rentals</a></li>
+                <li><a href="/about/">About</a></li>
             </ul>
         </section>
 
     </nav>
     {% include "partials/mobile-menu.html" %}
     <div class="header-focus row">
-        <h2>Your home is out there.</h2>
-        <h3>Find it here.</h3>
+        <h3>Find your home.</h3><h2>Fast.</h2>
 
         <form action='/map/' method='POST' class="medium-offset-2 medium-8 columns">
-            <input name="term" type="text"><button type="submit">Go</button>
+            <input name="term" type="text" placeholder="Department, Town"><button type="submit">See Homes</button>
         </form>
         <div class="large-4 columns"></div>
     </div>
 </header>
+<div class="lander-enhance">
+    <div class="row">
+        <div class="medium-4 columns">
+            <svg class="left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M20.5 3l-.16.03-5.34 2.07-6-2.1-5.64 1.9c-.21.07-.36.25-.36.48v15.12c0 .28.22.5.5.5l.16-.03 5.34-2.07 6 2.1 5.64-1.9c.21-.07.36-.25.36-.48v-15.12c0-.28-.22-.5-.5-.5zm-5.5 16l-6-2.11v-11.89l6 2.11v11.89z"/>
+                <path d="M0 0h24v24h-24z" fill="none"/>
+            </svg>
+        </div>
+        <div class="medium-8 columns">
+            <h4>Rapid Fire Search</h4>
+            <p>Find your favorite properties with intense speed and accuracy.
+                We believe you should be able to locate the best properties so we have created the fastest
+                way to find houses in your favorite areas</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-4 columns">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24h-24z" fill="none"/>
+                <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79l4.79 4.79v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1v-2h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+        </div>
+        <div class="medium-8 columns">
+            <h4 class="alt">Location First</h4>
+            <p>Find your favorite properties with intense speed and accuracy.
+            We believe you should be able to locate the best properties so we have created the fastest
+            way to find houses in your favorite areas</p>
+        </div>
+    </div>
+</div>
+<div class="map-hero">
+</div>
+<footer>
+    <div class="row">
+        <div class="medium-3 columns copyright">
+            <a href="/">
+                <img src="/img/logo.png" alt="Immown">
+            </a>
+            <div>© 2015 Immown</div>
+        </div>
+        <div class="medium-3 columns">
+            <ul>
+                <li><strong>Purchase Property</strong></li>
+                <li><a href="/map/paris">Paris Real Estate</a></li>
+                <li><a href="/map/toulouse">Toulouse Real Estate</a></li>
+                <li><a href="/map/nice">Nice Real Estate</a></li>
+                <li><a href="/map/lyon">Lyon Real Estate</a></li>
+                <li><a href="/map/bordeaux">Bordeaux Real Estate</a></li>
+            </ul>
+        </div>
+        <div class="medium-3 columns">
+            <ul>
+                <li><strong>Rentals</strong></li>
+                <li><a href="/map/paris">Paris Rentals</a></li>
+                <li><a href="/map/toulouse">Toulouse Rentals</a></li>
+                <li><a href="/map/nice">Nice Rentals</a></li>
+                <li><a href="/map/lyon">Lyon Rentals</a></li>
+                <li><a href="/map/bordeaux">Bordeaux Rentals</a></li>
+            </ul>
+        </div>
+        <div class="medium-3 columns">
+            <ul>
+                <li><strong>About</strong></li>
+                <li><a href="/about-us">Company</a></li>
+                <li><a href="https://www.facebook.com/Immown">Facebook</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/developers">Developers</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
 {% endblock %}

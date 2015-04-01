@@ -47,7 +47,6 @@ module.exports = function(server) {
         method: 'GET',
         path: '/map/{params*}',
         handler: function (request, reply) {
-
             var term = request.params.params,
                 context = {
                     seed_data: {

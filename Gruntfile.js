@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         browserify: {
             dist: {
                 files: {
-                    'public/js/immodispo.min.js': ['client/app/**/*.js']
+                    'public/js/immown.min.js': ['client/app/**/*.js']
                 }
             }
         },

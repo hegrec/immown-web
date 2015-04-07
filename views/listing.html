@@ -29,19 +29,24 @@
         <li>
             <a class="filter_btn" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></a>
         </li>
-        <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-        </li>
     </ul>
     <section class="top-bar-section hide-for-small-down">
         <!-- Left Nav Section -->
         <ul class="left">
             <li class="has-form">
                 <form action="/map/" method="post">
-                    <input type="text" name="term" value="{{ search_term }}" placeholder="Department, Town">
+                    <input type="text" name="term" value="{{ search_term }}" placeholder="Département, Ville">
                     <button type="submit" class="search-submitter"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
                 </form>
             </li>
+        </ul>
+    </section>
+    <section class="top-bar-section hide-for-medium-down">
+        <!-- Left Nav Section -->
+        <ul class="left">
+            <li><a href="/map/">Biens à vendre</a></li>
+            <li><a href="/map/?rent=1">Locations</a></li>
+            <li><a href="/about/">A propos</a></li>
         </ul>
     </section>
 </nav>
@@ -69,37 +74,42 @@
                 <div class="panel-body">
                     <h5>{{listing.town.name}}</h5>
 
-                    {% set listing_type = 'House' %}
+                    {% set listing_type = 'Maison' %}
 
                     {% if listing.construction_type == '2' %}
-                    {% set listing_type = 'Apartment' %}
+                    {% set listing_type = 'Appartement' %}
                     {% endif %}
 
                     {% if listing.construction_type == '3' %}
                     {% set listing_type = 'Terrain' %}
                     {% endif %}
 
-                    <div class="right" id="listingPriceText"><strong>{{ listing.price }}€ {% if listing.is_rental %}monthly{% endif %}</strong></div>
-                    <p class="lead">{{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</p>
-                    {% if listing.num_bedrooms %}
-                    <div class="right">
-                        {{listing.num_bathrooms}}  bath
-                    </div>
+                    <div class="right" id="listingPriceText"><strong>{{ listing.price }}€ {% if listing.is_rental
+                        %}mensuel{% endif %}</strong></div>
+                    <p class="lead">{{listing_type}} {% if listing.is_rental %}à louer{% else %}à vendre{% endif %}</p>
+                    {% if listing.num_rooms %}
                     <div>
-                        {{listing.num_bedrooms}}  bed
+                        {{listing.num_rooms}}  pièce(s)
+                    </div>
+                    {% endif %}
+                    {% if listing.num_bedrooms %}
+                    <div>
+                        {{listing.num_bedrooms}}  chambre(s)
                     </div>
                     {% endif %}
                     {% if listing.num_bathrooms %}
-
-                    {% endif %}
-                    {% if listing.total_surface %}
                     <div>
-                        Interior Size: {{listing.total_surface}}m<sup>2</sup>
+                        {{listing.num_bathrooms}}  salle(s) de bain
                     </div>
                     {% endif %}
-                    {% if listing.land_surface %}
+                    {% if listing.interior_size %}
                     <div>
-                        Lot Size: {{listing.land_surface}}m<sup>2</sup>
+                        Surface habitable: {{listing.interior_size}}m<sup>2</sup>
+                    </div>
+                    {% endif %}
+                    {% if listing.land_size %}
+                    <div>
+                        Surface terrain : {{listing.land_size}}m<sup>2</sup>
                     </div>
                     {% endif %}
                 </div>
@@ -137,33 +147,35 @@
         <div class="medium-3 columns">
             <div class="panel panel-default visible-md visible-lg">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Agency</h3>
+                    <h3 class="panel-title">Agence</h3>
                 </div>
                 <div class="panel-body">
                     {% if listing.agency %}
-                    <div>{{listing.agency.name}}</div>
-                    {% if listing.agency.image.indexOf("null") == -1 %}
-                    <img src="{{listing.agency.image | cdn}}" class="img img-thumbnail img-responsive">
-                    {% endif %}
-                    {% if listing.agency.telephone %}
-                    <form role="form" id="telephone_form">
-                        <input type="hidden" value="{{listing.agency.id}}" id="agency_id">
-                        <button type="submit" class="btn btn-default btn-block">
-                            <span class="glyphicon glyphicon-earphone"></span> Telephone
-                        </button>
-                    </form>
-                    {% endif %}
+                        <div>{{listing.agency.name}}</div>
+                        {% if listing.agency.image.indexOf("null") == -1 %}
+                        <img src="{{listing.agency.image | cdn}}" class="img img-thumbnail img-responsive">
+                        {% endif %}
+                        {% if listing.agency.telephone %}
+                        <div class="telephone-container">
+                            <form role="form" id="telephone_form">
+                                <input type="hidden" value="{{listing.agency.id}}" name="agency_id">
+                                <button type="submit" class="button expand">
+                                    Contactez l'agence
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
                     {% endif %}
                     <a href="{{listing.listing_url}}" target="_blank">
-                        <button type="button" id="website_view" class="btn btn-default btn-block">
-                            <span class="glyphicon glyphicon-globe"></span> View Original Listing
+                        <button type="button" id="website_view" class="button expand">
+                            Voir l'annonce d'origine
                         </button>
                     </a>
                 </div>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Similar Listings</h3>
+                    <h3 class="panel-title">Offres similaires</h3>
                 </div>
                 <div class="panel-body">
                     {% for sim in similars %}
@@ -176,7 +188,7 @@
                                 <span class="right">{{ sim.town.town_name }}</span>
                                 <div>{{ sim.price }}€</div>
                                 {% if sim.num_rooms %}
-                                <div>{{ sim.num_rooms }} Rooms</div>
+                                <div>{{ sim.num_rooms }} Pièces</div>
                                 {% endif %}
                             </div>
                         </a>
@@ -189,7 +201,7 @@
     <div class="row">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Nearby</h3>
+                <h3 class="panel-title">A proximité</h3>
             </div>
             <div class="panel-body listing-map">
                 <div id="map-canvas"></div>
@@ -197,13 +209,8 @@
         </div>
 
     </div>
-
-    <div class="row">
-        <div class="large-12">
-            Copyright 2015 Immown
-        </div>
-    </div>
 </div>
+{% include 'partials/footer.html' %}
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="/js/vendor/swiper.min.js"></script>
 {% endblock %}

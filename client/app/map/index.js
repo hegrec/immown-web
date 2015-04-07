@@ -45,12 +45,12 @@ function ImmoMap(application) {
             $(".menu_mobile_app.filter-form").addClass('open');
             $('#grey_back').addClass('open');
 
-            setTimeout(function() {$(".menu_mobile_app.filter-form input[type='text']:first").focus();}, 250);
+            setTimeout(function() {$(".menu_mobile_app.js-filter-form input[type='text']:first").focus();}, 250);
             self.mobileFilterOpen = true;
         }
     });
 
-    $('.js-filter-form button[type="submit"]').click(function()
+    $('.js-filter-form').on('submit', function()
     {
         if (self.mobileFilterOpen == true)
         {
@@ -94,9 +94,11 @@ ImmoMap.prototype.renderBoundaries = function (doc) {
 };
 
 ImmoMap.prototype.buildMapURL = function buildMapURL() {
-    var url = '?';
-    var mapLat = this.map.getCenter().lat() + '';
-    var mapLng = this.map.getCenter().lng() + '';
+    var url = '?',
+        sidebar = $('#map-sidebar'),
+        mapLat = this.map.getCenter().lat() + '',
+        mapLng = this.map.getCenter().lng() + '';
+
     mapLat = mapLat.substring(0, 6);
     mapLng = mapLng.substring(0, 6);
     url += 'lat=' + mapLat + '&lng=' + mapLng + "&zoom=" + this.map.getZoom();
@@ -104,28 +106,55 @@ ImmoMap.prototype.buildMapURL = function buildMapURL() {
         url += '&rent=1';
     }
 
-    if ($('input[name="minprice"]').val()) {
-        url += "&min-price=" + $('input[name="minprice"]').val();
+    if (sidebar.css('display') == 'none') {
+        sidebar = $('.menu_mobile_app.filter-form');
     }
 
-    if ($('input[name="maxprice"]').val()) {
-        url += "&max-price=" + $('input[name="maxprice"]').val();
+    if (sidebar.find('input[name="minprice"]').val()) {
+        url += "&min-price=" + sidebar.find('input[name="minprice"]').val();
     }
 
-    if ($('input[name="minsize"]').val()) {
-        url += "&min-size=" + $('input[name="minsize"]').val();
+    if (sidebar.find('input[name="maxprice"]').val()) {
+        url += "&max-price=" + sidebar.find('input[name="maxprice"]').val();
     }
 
-    if ($('input[name="maxsize"]').val()) {
-        url += "&max-size=" + $('input[name="maxsize"]').val();
+    if (sidebar.find('input[name="minsize"]').val()) {
+        url += "&min-size=" + sidebar.find('input[name="minsize"]').val();
     }
 
+    if (sidebar.find('input[name="maxsize"]').val()) {
+        url += "&max-size=" + sidebar.find('input[name="maxsize"]').val();
+    }
+
+    if (sidebar.find('input[name="minroom"]').val()) {
+        url += "&min-room=" + sidebar.find('input[name="minroom"]').val();
+    }
+
+    if (sidebar.find('input[name="maxroom"]').val()) {
+        url += "&max-room=" + sidebar.find('input[name="maxroom"]').val();
+    }
+
+    if (sidebar.find('select[name="sort"]').val() != 'featured') {
+        url += "&sort=" + sidebar.find('select[name="sort"]').val();
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_a').prop('checked')) {
+        url += "&apartment=" + 0;
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_h').prop('checked')) {
+        url += "&house=" + 0;
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_t').prop('checked')) {
+        url += "&land=" + 0;
+    }
     return "/map/" + url;
 };
 
 ImmoMap.prototype.updateMapURL = function updateMapURL() {
     var self = this;
-    History.replaceState({}, "ImmoDispo", self.buildMapURL());
+    History.replaceState({}, "Immown", self.buildMapURL());
 };
 
 ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
@@ -164,6 +193,30 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
         $('input[name="maxsize"]').val(paramKeys['max-size']);
     }
 
+    if (paramKeys['min-room']) {
+        $('input[name="minroom"]').val(paramKeys['min-room']);
+    }
+
+    if (paramKeys['max-room']) {
+        $('input[name="maxroom"]').val(paramKeys['max-room']);
+    }
+
+    if (paramKeys['land'] == 0) {
+        $('input[name="construct_type"].search_t').prop('checked', false);
+    }
+
+    if (paramKeys['apartment'] == 0) {
+        $('input[name="construct_type"].search_a').prop('checked', false);
+    }
+
+    if (paramKeys['house'] == 0) {
+        $('input[name="construct_type"].search_h').prop('checked', false);
+    }
+
+    if (paramKeys['sort']) {
+        $('select[name="sort"]').val(paramKeys['sort']);
+    }
+
     if (paramKeys['rent']) {
         $("input[name='rent_or_sale'][value='rent']").prop('checked', true);
         self.rentalMode = true;
@@ -174,6 +227,18 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
     $("input[name='rent_or_sale']").on('change', function () {
         self.rentalMode = $(this).val() == 'rent';
 
+        self.clearMarkers();
+        self.loadMapIcons();
+        self.updateMapURL();
+    });
+
+    $("input[name='construct_type']").on('change', function () {
+        self.clearMarkers();
+        self.loadMapIcons();
+        self.updateMapURL();
+    });
+
+    $("select[name='sort']").on('change', function () {
         self.clearMarkers();
         self.loadMapIcons();
         self.updateMapURL();
@@ -201,7 +266,7 @@ ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
     this.mapLoaded = false;
 
     this.iconInfoWindow = new google.maps.InfoWindow({
-        content: "Loading Info..."
+        content: "Chargement en cours..."
     });
 
     this.map = new google.maps.Map(document.getElementById(canvasId),
@@ -209,17 +274,21 @@ ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
             zoom: defaultZoom,
             disableDefaultUI: true,
             minZoom: 6,
+            scaleControl: true,
             center: new google.maps.LatLng(defaultLat, defaultLng),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
     );
-
-    this.geoParser = new geoXML3.parser({
-        map: self.map,
-        suppressInfoWindows: true,
-        zoom: false,
-        afterParse: function(doc) { self.renderBoundaries(doc) }
-    });
+    if (self.application.moduleVars.boundaries) {
+        this.geoParser = new geoXML3.parser({
+            map: self.map,
+            suppressInfoWindows: true,
+            zoom: false,
+            afterParse: function (doc) {
+                self.renderBoundaries(doc)
+            }
+        });
+    }
 
     google.maps.event.addListenerOnce(this.map, 'idle', function () {
         var boundaries = '';
@@ -237,12 +306,20 @@ ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
 
 
     google.maps.event.addListener(self.map, 'zoom_changed', function () {
+        if (self.geoParser) {
+            self.geoParser.hideDocument();
+            self.geoParser = null;
+        }
         self.loadMapIcons();
         self.updateMapURL();
     });
 
     google.maps.event.addListener(self.map, 'dragend', function () {
         window.setTimeout(function() {
+            if (self.geoParser) {
+                self.geoParser.hideDocument();
+                self.geoParser = null;
+            }
             self.loadMapIcons();
         }, 150);
 
@@ -325,12 +402,17 @@ ImmoMap.prototype.loadMapIcons = function() {
 
             });
 
-            var text = serverIcons.icons.length + ' results';
+            var text = serverIcons.icons.length + ' résultats';
             if (serverIcons.has_more) {
-                text = serverIcons.icons.length + '+ results';
+                text = serverIcons.icons.length + '+ résultats';
             }
 
-            $('.js-result-count').text(text);
+            if (serverIcons.town_name) {
+                text += ' à ' + serverIcons.town_name;
+                text += '<h5>Déplacez vous sur la carte pour voir d\'autres annonces</h5>';
+            }
+
+            $('.js-result-count').html(text);
         }
     });
 };
@@ -349,6 +431,10 @@ ImmoMap.prototype.buildMapIcon = function buildMapIcon(serverIcon) {
                 id: serverIcon.id
             }
         };
+
+    if (serverIcon.r) {
+        options.image = '/img/icon_rent.png';
+    }
 
     return new MapIcon(options);
 };
@@ -429,11 +515,13 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
         max_price,
         min_surface,
         max_surface,
-        min_bedroom,
-        max_bedroom,
+        min_room,
+        max_room,
+        sort,
         search_a,
         search_h,
-        search_t;
+        search_t,
+        pathname = location.pathname.substr(1).split('/');
 
         if (sidebar.css('display') == 'none') {
             sidebar = $('.menu_mobile_app.filter-form');
@@ -443,12 +531,21 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
         max_price = Number(sidebar.find('input[name="maxprice"]').val()),
         min_surface = Number(sidebar.find('input[name="minsize"]').val()),
         max_surface = Number(sidebar.find('input[name="maxsize"]').val()),
-        min_bedroom = Number(sidebar.find('input[name="minbed"]').val()),
-        max_bedroom = Number(sidebar.find('input[name="maxbed"]').val());
+        min_room = Number(sidebar.find('input[name="minroom"]').val()),
+        max_room = Number(sidebar.find('input[name="maxroom"]').val());
+        sort = sidebar.find('select[name="sort"]').val();
 
     if (this.rentalMode) {
         searchValues["rental"] = 1
 
+    }
+
+    if (pathname[1]) {
+        searchValues['town'] = pathname[1];
+    }
+
+    if (sort) {
+        searchValues['sort'] = sort;
     }
 
     if (min_price)
@@ -465,11 +562,11 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
         searchValues["max_size"] = max_surface;
 
 
-    if (min_bedroom)
-        searchValues["min_bedroom"] = min_bedroom;
+    if (min_room)
+        searchValues["min_room"] = min_room;
 
-    if (max_bedroom)
-        searchValues["max_bedroom"] = max_bedroom;
+    if (max_room)
+        searchValues["max_room"] = max_room;
 
     search_a = sidebar.find('.search_a');
     search_h = sidebar.find('.search_h');

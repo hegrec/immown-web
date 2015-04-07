@@ -44,120 +44,32 @@
         <ul class="left">
             <li class="has-form">
                 <form action="/map/" method="post">
-                        <input type="text" name="term" value="{{ search_term }}" placeholder="Department, Town">
+                        <input type="text" name="term" value="{{ search_term }}" placeholder="Département, Ville">
                         <button type="submit" class="search-submitter"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
                 </form>
             </li>
         </ul>
     </section>
+    <section class="top-bar-section hide-for-medium-down">
+        <!-- Left Nav Section -->
+        <ul class="left">
+            <li><a href="/map/">Biens à vendre</a></li>
+            <li><a href="/map/?rent=1">Locations</a></li>
+            <li><a href="/about/">A propos</a></li>
+        </ul>
+    </section>
 </nav>
 <div class="row map-list hide-for-medium-up">
-    <div class="left map active">Map</div>
-    <div class="right list">List</div>
+    <div class="left map active">Carte</div>
+    <div class="right list">Liste</div>
 </div>
 <div class="menu_mobile_app filter-form">
-    <form class=" js-filter-form">
-    <div class="row purchase-type">
-        <div class="checkboxbutton">
-            <label>
-                <input type="radio" value="sale" name="rent_or_sale">
-                <span>For Sale</span>
-            </label>
-        </div>
-        <div class="checkboxbutton btn">
-            <label>
-                <input type="radio" value="rent" name="rent_or_sale">
-                <span>For Rent</span>
-            </label>
-        </div>
-    </div>
-    <div class="row listing-type">
-        <div class="checkboxbutton">
-            <label>
-                <input type="checkbox" value="1" name="construct_type" class="search_a" checked>
-                <span>Apartment</span>
-            </label>
-        </div>
-        <div class="checkboxbutton">
-            <label>
-                <input type="checkbox" value="1" name="construct_type" class="search_h" checked>
-                <span>House</span>
-            </label>
-        </div>
-        <div class="checkboxbutton">
-            <label>
-                <input type="checkbox" value="1" name="construct_type" class="search_t" checked>
-                <span>Terrain</span>
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <label class="small-6 columns">Min Price<input type="text" name="minprice"></label>
-        <label class="small-6 columns">Max Price<input type="text" name="maxprice"></label>
-    </div>
-    <div class="row">
-        <label class="small-6 columns">Min Size<input type="text" name="minsize"></label>
-        <label class="small-6 columns">Max Size<input type="text" name="maxsize"></label>
-    </div>
-    <div class="row">
-        <label class="small-6 columns">Min Bedrooms<input type="text" name="minbed"></label>
-        <label class="small-6 columns">Max Bedrooms<input type="text" name="maxbed"></label>
-    </div>
-    <button type="submit" class="btn expand">Update Filter</button>
-    </form>
+    {% include "partials/filter-menu.html" %}
 </div>
 
 <div id="map-sidebar">
-    <form class="filter-form js-filter-form">
-        <div class="row purchase-type">
-            <div class="checkboxbutton">
-                <label>
-                    <input type="radio" value="sale" name="rent_or_sale">
-                    <span>For Sale</span>
-                </label>
-            </div>
-            <div class="checkboxbutton btn">
-                <label>
-                    <input type="radio" value="rent" name="rent_or_sale">
-                    <span>For Rent</span>
-                </label>
-            </div>
-        </div>
-        <div class="row listing-type">
-            <div class="checkboxbutton">
-                <label>
-                    <input type="checkbox" value="1" name="construct_type" class="search_a" checked>
-                    <span>Apartment</span>
-                </label>
-            </div>
-            <div class="checkboxbutton">
-                <label>
-                    <input type="checkbox" value="1" name="construct_type" class="search_h" checked>
-                    <span>House</span>
-                </label>
-            </div>
-            <div class="checkboxbutton">
-                <label>
-                    <input type="checkbox" value="1" name="construct_type" class="search_t" checked>
-                    <span>Terrain</span>
-                </label>
-            </div>
-        </div>
-        <div class="row">
-            <label class="small-6 columns">Min Price<input type="text" name="minprice"></label>
-            <label class="small-6 columns">Max Price<input type="text" name="maxprice"></label>
-        </div>
-        <div class="row">
-            <label class="small-6 columns">Min Size<input type="text" name="minsize"></label>
-            <label class="small-6 columns">Max Size<input type="text" name="maxsize"></label>
-        </div>
-        <div class="row">
-            <label class="small-6 columns">Min Bedrooms<input type="text" name="minbed"></label>
-            <label class="small-6 columns">Max Bedrooms<input type="text" name="maxbed"></label>
-        </div>
-        <button class="btn expand">Update Filter</button>
-    </form>
-    <h3 class="js-result-count">Loading Results...</h3>
+    {% include "partials/filter-menu.html" %}
+    <h3 class="js-result-count">Chargement en cours...</h3>
     <ul class="listing-results">
 
     </ul>

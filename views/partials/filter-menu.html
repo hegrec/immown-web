@@ -1,0 +1,61 @@
+<form class="js-filter-form">
+    <div class="row purchase-type">
+        <div class="checkboxbutton">
+            <label>
+                <input type="radio" value="sale" name="rent_or_sale">
+                <span>A vendre</span>
+            </label>
+        </div>
+        <div class="checkboxbutton btn">
+            <label>
+                <input type="radio" value="rent" name="rent_or_sale">
+                <span>A louer</span>
+            </label>
+        </div>
+    </div>
+    <div class="row listing-type">
+        <div class="checkboxbutton">
+            <label>
+                <input type="checkbox" value="1" name="construct_type" class="search_a" checked>
+                <span>Appartement</span>
+            </label>
+        </div>
+        <div class="checkboxbutton">
+            <label>
+                <input type="checkbox" value="1" name="construct_type" class="search_h" checked>
+                <span>Maison</span>
+            </label>
+        </div>
+        <div class="checkboxbutton">
+            <label>
+                <input type="checkbox" value="1" name="construct_type" class="search_t" checked>
+                <span>Terrain</span>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <label class="small-6 columns">Prix min<input type="text" name="minprice"></label>
+        <label class="small-6 columns">Prix max<input type="text" name="maxprice"></label>
+    </div>
+    <div class="row">
+        <label class="small-6 columns">Pièces min<input type="text" name="minroom"></label>
+        <label class="small-6 columns">Pièces max<input type="text" name="maxroom"></label>
+    </div>
+    <div class="row">
+        <label class="small-6 columns">Taille min<input type="text" name="minsize"></label>
+        <label class="small-6 columns">Taille max<input type="text" name="maxsize"></label>
+    </div>
+    <div class="row">
+        <label class="small-12 columns">
+            Trier:
+            <select name="sort">
+                <option value="featured">Par pertinence</option>
+                <option value="priceasc">Par prix: croissant</option>
+                <option value="pricedesc">Par prix: décroissant</option>
+                <option value="sizeasc">Par taille: croissante</option>
+                <option value="sizedesc">Par taille: décroissante</option>
+            </select>
+        </label>
+    </div>
+    <button class="btn expand">Actualiser la recherche</button>
+</form>

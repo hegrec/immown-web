@@ -15,6 +15,22 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
+        path: '/about',
+        handler: function (request, reply) {
+            var context = {
+                seed_data: {
+                    module: "about",
+                    vars: {}
+                }
+            };
+            context.seed_data = JSON.stringify(context.seed_data);
+
+            reply.render("about.html", context);
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/css/{filepath*}',
         handler: {
             file: function (request, reply) {
@@ -76,12 +92,15 @@ module.exports = function(server) {
                         found,
                         zoom = 9;
 
+                    if (err) {
+                        return reply("Server error 500. Please try again later").code(500)
+                    }
+
                     //try department first, then go for town if not found
                     if (searchResults.body.length == 0) {
                         searchResults = results[1];
                         zoom = 12;
                     }
-
 
                     if (searchResults.body.length > 0) {
                         found = searchResults.body[0];
@@ -91,6 +110,7 @@ module.exports = function(server) {
                         context.seed_data.vars.zoom = zoom;
                         context.search_term = found.name;
                         context.seed_data.vars.boundaries = found.kml;
+                        context.seed_data.vars.town_name = found.name;
                     }
 
                     context.seed_data = JSON.stringify(context.seed_data);
@@ -106,7 +126,7 @@ module.exports = function(server) {
 
     server.route({
         method: 'POST',
-        path: '/map/',
+        path: '/map',
         handler: function (request, reply) {
             var term = request.payload.term;
 
@@ -139,7 +159,7 @@ module.exports = function(server) {
                 }
 
                 if (err) {
-                    reply(err);
+                    return reply("Server error 500. Please try again later").code(500)
                 } else if (searchResults.body.length > 0){
                     found = searchResults.body[0].name.toLowerCase().replace(/\s/g, '-');
                     reply.redirect('/map/' + found);
@@ -149,10 +169,10 @@ module.exports = function(server) {
             });
         }
     });
-
+    /*
     server.route({
         method: 'GET',
-        path: '/agents/',
+        path: '/agents',
         handler: function (request, reply) {
             var context = {};
             reply.render('agents.html', context);
@@ -161,7 +181,7 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
-        path: '/home-owners/',
+        path: '/home-owners',
         handler: function (request, reply) {
             var context = {};
             reply.render('home-owners.html', context);
@@ -170,7 +190,7 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
-        path: '/list-a-home/',
+        path: '/list-a-home',
         handler: function (request, reply) {
             var context = {};
             reply.render('list-a-home.html', context);
@@ -179,7 +199,7 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
-        path: '/sign-up/',
+        path: '/sign-up',
         handler: function (request, reply) {
             var context = {};
             reply.render('register.html', context);
@@ -188,13 +208,13 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
-        path: '/sign-in/',
+        path: '/sign-in',
         handler: function (request, reply) {
             var context = {};
             reply.render('login.html', context);
         }
     });
-
+*/
     server.route({
         method: 'GET',
         path: '/listing/{id}',
@@ -205,7 +225,7 @@ module.exports = function(server) {
             request.server.app.api.get(env.API_HOST + "/listings/" + id + "?include=ListingImage,ListingDetail,Town,Agency", function (err, listingResult) {
 
                 if (err) {
-                    reply(err);
+                    return reply("Server error 500. Please try again later").code(500)
                 }
                 var context = {
                     listing: listingResult.body[0],
@@ -238,6 +258,8 @@ module.exports = function(server) {
 
         if (request.query['rental']) {
             filterString = filterString + '&filter=is_rental=1';
+        } else {
+            filterString = filterString + '&filter=is_rental=0';
         }
 
         if (Number(request.query['min_price'])) {
@@ -256,8 +278,16 @@ module.exports = function(server) {
             filterString = filterString + '&filter=total_size<'+request.query['max_size'];
         }
 
+        if (Number(request.query['min_room'])) {
+            filterString = filterString + '&filter=num_rooms>'+request.query['min_room'];
+        }
+
+        if (Number(request.query['max_room'])) {
+            filterString = filterString + '&filter=num_rooms<'+request.query['max_room'];
+        }
+
         if (request.query['search_a'] == 1
-            || request.query['search_a'] == 1
+            || request.query['search_h'] == 1
             || request.query['search_t'] == 1
            ) {
             var typeIncludes = [];
@@ -286,28 +316,158 @@ module.exports = function(server) {
         handler: function (request, reply) {
             var numPerPage = 20,
                 filterString = buildMapFilter(request),
+                townTerm = request.query['town'],
+                sortBy = request.query.sort,
+                sortTerm = '-feature_score',
                 currentPage = Number(request.query['page']) || 1;
 
-            //build a simple sidebar with all listings in the box
-            request.server.app.api.get(env.API_HOST + "/listings?sort=-feature_score&limit=" + numPerPage
-                + "&start=" + (1+((currentPage-1)*numPerPage))
-                + "&include=ListingImage,Town&" + filterString, function (err, sidebarResults) {
+            switch (sortBy) {
+                case 'priceasc':
+                    sortTerm = 'price';
+                    break;
+                case 'pricedesc':
+                    sortTerm = '-price';
+                    break;
+                case 'sizeasc':
+                    sortTerm = 'total_size';
+                    break;
+                case 'sizedesc':
+                    sortTerm = '-total_size';
+                    break;
+            }
 
-                if (err) {
-                    return reply(err).code(500);
-                }
+            var getSidebarListings = function() {
+                //build a simple sidebar with all listings in the box
+                request.server.app.api.get(env.API_HOST + "/listings?sort=" + sortTerm + "&limit=" + numPerPage
+                    + "&start=" + (1+((currentPage-1)*numPerPage))
+                    + "&include=ListingImage,Town&" + filterString, function (err, sidebarResults) {
 
-                var context = {
-                    listings: sidebarResults.body,
-                    current_page: currentPage,
-                    page_count: Math.ceil(sidebarResults.meta.total / numPerPage)
-                };
-                reply.render("partials/result-listing.html", context);
+                    if (err) {
+                        return reply("Server error 500. Please try again later").code(500)
+                    }
 
-            });
+                    var context = {
+                        listings: sidebarResults.body,
+                        current_page: currentPage,
+                        page_count: Math.ceil(sidebarResults.meta.total / numPerPage)
+                    };
+                    reply.render("partials/result-listing.html", context);
+
+                });
+            };
+
+            if (townTerm) {
+                townTerm = "sort=-population&filter=name~>" + townTerm.replace(/-/g, ' ');
+
+                request.server.app.api.get(env.API_HOST + "/towns?" + townTerm, function (err, searchResults) {
+                    var townIds = [];
+
+                    if (err) {
+                        return reply("Server error 500. Please try again later").code(500)
+                    }
+
+                    _.each(searchResults.body, function (twn) {
+                        townIds.push(twn.id);
+                    });
+
+                    if (townIds.length > 0) {
+                        filterString = filterString + '&filter=TownId|IN|' + townIds.join(',');
+                    }
+
+                    getSidebarListings();
+
+                });
+            } else {
+                getSidebarListings();
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/icons',
+        handler: function(request, reply) {
+            var filterString = buildMapFilter(request),
+                townTerm = request.query['town'],
+                sortBy = request.query.sort,
+                sortTerm = '-feature_score',
+                output = {};
+
+            switch (sortBy) {
+                case 'priceasc':
+                    sortTerm = 'price';
+                    break;
+                case 'pricedesc':
+                    sortTerm = '-price';
+                    break;
+                case 'sizeasc':
+                    sortTerm = 'total_size';
+                    break;
+                case 'sizedesc':
+                    sortTerm = '-total_size';
+                    break;
+            }
+
+            var getIconListings = function() {
+                request.server.app.api.get(env.API_HOST + "/listings?sort=" + sortTerm + "&limit=1000&" + filterString, function (err, sidebarResults) {
+
+                    if (err) {
+                        reply("Server error 500. Please try again later").code(500)
+                    }
+                    var icons = [];
+
+                    _.each(sidebarResults.body, function (listing) {
+
+                        var iconData = {};
+                        iconData.la = listing.latitude;
+                        iconData.lo = listing.longitude;
+                        iconData.id = listing.id;
+                        iconData.r = listing.is_rental;
+                        iconData.price = listing.price;
+                        icons.push(iconData);
+                    });
+
+
+                    output.icons = icons;
+                    output.has_more = sidebarResults.meta.total > icons.length;
+
+
+
+                    reply(output);
+
+                });
+            };
+
+            if (townTerm) {
+                townTerm = "sort=-population&filter=name~>" + townTerm.replace(/-/g, ' ');
+
+                request.server.app.api.get(env.API_HOST + "/towns?" + townTerm, function (err, searchResults) {
+
+                    var townIds = [];
+
+                    if (err) {
+                        return reply("Server error 500. Please try again later").code(500);
+                    }
+
+                    _.each(searchResults.body, function (twn) {
+                        townIds.push(twn.id);
+                    });
+
+                    if (townIds.length > 0) {
+                        filterString = filterString + '&filter=TownId|IN|' + townIds.join(',');
+                        output.town_name = searchResults.body[0].name;
+                    }
+
+                    getIconListings();
+
+                });
+            } else {
+                getIconListings();
+            }
 
         }
     });
+
 
     server.route({
         method: 'GET',
@@ -319,7 +479,7 @@ module.exports = function(server) {
             request.server.app.api.get(env.API_HOST + "/listings/" + listingId + "?include=ListingImage,Town", function (err, overviewListing) {
 
                 if (err) {
-                    callback(err);
+                    return reply("Server error 500. Please try again later").code(500)
                 }
                 var context = {
                     listing: overviewListing.body[0]
@@ -343,7 +503,7 @@ module.exports = function(server) {
             request.server.app.api.get(env.API_HOST + "/towns?" + filterString, function (err, searchResults) {
 
                 if (err) {
-                    callback(err);
+                    return reply("Server error 500. Please try again later").code(500)
                 }
                 reply(searchResults);
 
@@ -354,35 +514,25 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
-        path: '/icons',
-        handler: function(request, reply) {
-            var filterString = buildMapFilter(request);
+        path: '/agency_telephone/{id}',
+        handler: function (request, reply) {
+            var id = Number(request.params.id);
 
-            request.server.app.api.get(env.API_HOST + "/listings?sort=-feature_score&limit=1000&" + filterString, function (err, sidebarResults) {
+            //build a simple sidebar with all listings in the box
+            request.server.app.api.get(env.API_HOST + "/agencies/" + id, function (err, searchResults) {
 
                 if (err) {
-                    reply(err);
+                    return reply("Server error 500. Please try again later").code(500)
                 }
-                var icons = [];
 
-                _.each(sidebarResults.body, function(listing) {
+                if (searchResults.body.length) {
+                    return reply(searchResults.body[0].telephone);
+                }
 
-                    var iconData = {};
-                    iconData.la = listing.latitude;
-                    iconData.lo = listing.longitude;
-                    iconData.id = listing.id;
-                    iconData.price = listing.price;
-                    icons.push(iconData);
-                });
-
-                var output = {
-                    icons: icons,
-                    has_more: sidebarResults.meta.total>icons.length
-                };
-                reply(output);
+                reply(false);
 
             });
 
         }
-    })
+    });
 };

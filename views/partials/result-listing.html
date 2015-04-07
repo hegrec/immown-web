@@ -4,24 +4,24 @@
 
         <div class="img-thumbnail" style="background-image:url({{listing.images[0].standard_url | cdn}});">
             <ul class='sidebar-details hide-for-medium-up'>
-                {% set listing_type = 'House' %}
+                {% set listing_type = 'Maison' %}
 
                 {% if listing.construction_type == '2' %}
-                {% set listing_type = 'Apartment' %}
+                {% set listing_type = 'Appartement' %}
                 {% endif %}
 
                 {% if listing.construction_type == '3' %}
                 {% set listing_type = 'Terrain' %}
                 {% endif %}
                 <li>
-                    <strong>{{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
+                    <strong>{{listing_type}} {% if listing.is_rental %}à louer{% else %}à vendre{% endif %}</strong>
                 </li>
                 <li class="sidebar-price">
                     <div>{{ listing.price }}€</div>
                 </li>
                 <li>
                     {% if listing.num_rooms %}
-                    <div>{{ listing.num_rooms }} Rooms</div>
+                    <div>{{ listing.num_rooms }} Pièces</div>
                     {% endif %}
                 </li>
                 <li>
@@ -37,10 +37,10 @@
             </div>
         </div>
             <div class='show-for-medium-up'>
-                {% set listing_type = 'House' %}
+                {% set listing_type = 'Maison' %}
 
                 {% if listing.construction_type == '2' %}
-                {% set listing_type = 'Apartment' %}
+                {% set listing_type = 'Appartement' %}
                 {% endif %}
 
                 {% if listing.construction_type == '3' %}
@@ -48,15 +48,21 @@
                 {% endif %}
 
                 <div class="sidebar-price">
-                    <strong>{{ listing.price }}€</strong>
+                    <strong>{{ listing.price | currency}}</strong>
                 </div>
                 <div>
-                    {{listing_type}} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}
+                    {{listing_type}} {% if listing.is_rental %}à louer{% else %}à vendre{% endif %}
                 </div>
 
                 <div>
                     {% if listing.num_rooms %}
-                    <div>{{ listing.num_rooms }} Rooms</div>
+                    <div>{{ listing.num_rooms }} Pièce(s)</div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if listing.num_bedrooms %}
+                    <div>{{ listing.num_bedrooms }} Chambre(s)</div>
                     {% endif %}
                 </div>
                 <div>
@@ -73,7 +79,7 @@
 {% endfor %}
 {% if listings|length == 0 %}
 <li class="sidebar-listing">
-    No properties found matching your desired criteria
+    Aucun bien ne répond aux critères sélectionnés
 </li>
 {% endif %}
 <li>
@@ -81,14 +87,14 @@
     <span class="step-links">
         Page:
         {% if current_page > 1 %}
-        <a href="#" class="pagination-link" data-page="{{current_page - 1}}" style="margin-right:5px">Previous</a>
+        <a href="#" class="pagination-link" data-page="{{current_page - 1}}" style="margin-right:5px">Précédent</a>
        {% endif %}
         {{current_page}}/{{page_count}}
 
        {% if current_page < page_count %}
-       <a href="#" data-page="{{current_page + 1}}" class="pagination-link" style="margin-right:5px">Next</a>
+       <a href="#" data-page="{{current_page + 1}}" class="pagination-link" style="margin-right:5px">Suivant</a>
        {% endif %}
     </span>
     </div>
-    <h4 class="muted pull-right">© 2015 Immown. All rights reserved</h4>
+    <h4 class="muted pull-right">© 2015 Immown. Tous droits réservés</h4>
 </li>

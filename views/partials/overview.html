@@ -9,21 +9,21 @@
     </a>
     <a href="/listing/{{listing.id}}"><div style='padding-left: 10px; font-size: 13px;'>
 
-        {% set listing_type = 'House' %}
+        {% set listing_type = 'Maison' %}
 
         {% if listing.construction_type == '2' %}
-        {% set listing_type = 'Apartment' %}
+        {% set listing_type = 'Appartement' %}
         {% endif %}
 
         {% if listing.construction_type == '3' %}
         {% set listing_type = 'Terrain' %}
         {% endif %}
 
-        <strong>{{ listing_type }} {% if listing.is_rental %}for rent{% else %}for sale{% endif %}</strong>
+        <strong>{{ listing_type }} {% if listing.is_rental %}à louer{% else %}à vendre{% endif %}</strong>
 
-        <div>{{ listing.price }}€ {% if listing.is_rental %}monthly {% endif %}</div>
+        <div>{{ listing.price | currency }} {% if listing.is_rental %}mensuel {% endif %}</div>
         {% if listing.num_rooms %}
-        <div>{{ listing.num_rooms }} Rooms</div>
+        <div>{{ listing.num_rooms }} Pièces</div>
         {% endif %}
         {% if listing.total_size %}
         <div>{{ listing.total_size }}m<sup>2</sup></div>
@@ -31,5 +31,6 @@
         <div>&nbsp;</div>
         {% endif %}
         <span class="floatRight">{{ listing.town.name }}</span>
+        <button class="button small right">En savoir plus</button>
     </a>
 </div>

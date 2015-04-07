@@ -32,6 +32,20 @@
     bottom: 0;
 }
 
+#map-holder .my-location {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width:26px;
+    height: 26px;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.4);
+    fill: white;
+    z-index: 9;
+    cursor: pointer;
+}
+
 #map-sidebar {
     position: fixed;
     overflow-y: scroll;
@@ -159,7 +173,7 @@ ul.listing-results {
 .lander-enhance,
 footer {
     box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    z-index: 10;
+    z-index: 9;
     position: relative;
     padding: 50px;
 }
@@ -216,6 +230,10 @@ footer li {
 .hero-header .header-focus {
     padding-top: 75px;
     text-align: center;
+}
+
+.hero-header .header-focus.short {
+    padding-top: 0;
 }
 
 .hero-header .header-focus input {
@@ -480,8 +498,9 @@ h3.js-result-count {
     background:#ffffff;
     top:0;
     bottom:0;
-    right:-250px;
-    width:250px;
+    right:-280px;
+    width:280px;
+    max-width: 90%;
     overflow-y: scroll;
     z-index:9999;
     -webkit-transition: right 0.2s ease-out;
@@ -677,7 +696,7 @@ h3.js-result-count {
 }
 
 .overview {
-    width: 280px;
+    width: 300px;
     max-width: 100%;
     height: 160px;
 }

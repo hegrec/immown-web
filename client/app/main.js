@@ -1,4 +1,4 @@
-function Immodispo(seedData) {
+function Immown(seedData) {
 
     var self = this;
 
@@ -13,7 +13,7 @@ function Immodispo(seedData) {
     });
 }
 
-Immodispo.prototype.start = function () {
+Immown.prototype.start = function () {
 
     var Module;
 
@@ -28,7 +28,6 @@ Immodispo.prototype.start = function () {
     if (Module) {
         this.module = new Module(this);
     }
-
 
     var isMenuOpen = false,
         isSearchMenuOpen = false;
@@ -73,4 +72,4 @@ Immodispo.prototype.start = function () {
     });
 };
 
-window.immodispo = Immodispo;
+window.immown = Immown;

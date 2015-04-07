@@ -1,7 +1,7 @@
 var Api = require('immodispo-api-client'),
     env = require('./env'),
     Hapi = require('hapi'),
-    server = new Hapi.Server();
+    server = new Hapi.Server({connections: {router: {stripTrailingSlash: true}}});
 server.connection({ port: 3000 });
 
 var plugins = [

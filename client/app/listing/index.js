@@ -36,13 +36,12 @@ function ImmoListing(application) {
         defaultLng = this.application.moduleVars.lng;
     }
 
-
-
     this.map = new google.maps.Map(document.getElementById('map-canvas'),
         {
             zoom: 12,
             disableDefaultUI: true,
             minZoom: 10,
+            scaleControl: true,
             center: new google.maps.LatLng(defaultLat, defaultLng),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
@@ -57,6 +56,23 @@ function ImmoListing(application) {
 
     var icon =  new MapIcon(options);
     icon.getGoogleMapsIcon(self.map);
+
+
+    $('#telephone_form').on('submit', function(evt) {
+        var agencyId = $(this).find('input[name="agency_id"]').val();
+
+        $.ajax({
+            url: '/agency_telephone/' + agencyId,
+            success: function(telephone) {
+
+
+                $('#telephone_form').remove();
+                $('.telephone-container').html('<strong><a href="tel:' + telephone + '">' + telephone + '</a></strong>');
+            }
+
+        });
+       return false;
+    });
 }
 
 module.exports = ImmoListing;

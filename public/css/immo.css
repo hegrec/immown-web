@@ -18,7 +18,7 @@
     opacity: 0.05;
 }
 
-.listing-content {
+.page-content {
     padding-top: 55px;
 }
 
@@ -203,8 +203,33 @@ footer li {
 
 .map-hero {
     background-size: cover;
+    min-height: 200px;
     background-image: url('/img/map.png');
-    height: 200px;
+}
+
+.map-hero .header-focus {
+    padding-top: 7%;
+    text-align: center;
+}
+
+.intrinsic-wrapper {
+    position: relative;
+    padding-bottom: 40%;
+    height: 0;
+}
+
+.intrinsic-wrapper>div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.map-hero h1,
+.map-hero h2 {
+    color: black;
+    font-weight: bold;
 }
 
 .swiper-slide {
@@ -219,7 +244,7 @@ footer li {
 
 .hero-header {
     height: 400px;
-    background: url(/img/hero.jpg);
+    background: url(/img/hero2.jpg);
     background-position: center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -259,11 +284,37 @@ footer li {
 .hero-header .header-focus h2 {
     font-weight: bold;
     font-size: 3em;
+    color: black;
+}
+
+.hero-header h3 {
+    font-weight: bold;
+    color: black;
 }
 
 .hero-header .top-bar-section ul li {
     margin-left: 30px;
 }
+
+.about-header {
+    height: 600px;
+    background: url(/img/hero-about.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    text-align: center;
+    padding-top: 200px;
+}
+
+.about-header h1,
+.about-header h2 {
+    color: white;
+    font-weight: bold;
+}
+
+
 
 .hero-header .top-bar-section ul li,
 .hero-header .top-bar-section li:not(.has-form) a:not(.button),
@@ -274,7 +325,7 @@ footer li {
 .hero-header .top-bar-section ul li > a {
     color: #000;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 15px;
     cursor: pointer;
 }
 
@@ -618,12 +669,6 @@ h3.js-result-count {
         max-height: 100%;
     }
 
-    .map-hero {
-        background-size: cover;
-        background-image: url('/img/map.png');
-        height: 550px;
-    }
-
     #map-sidebar,
     .top-bar {
         box-shadow: 0 0 10px rgba(0,0,0,0.4);
@@ -647,6 +692,11 @@ h3.js-result-count {
 
     #map-sidebar form {
         display: block;
+    }
+
+    .map-hero .header-focus {
+        padding-top: 12%;
+        text-align: center;
     }
 
     #map-holder {

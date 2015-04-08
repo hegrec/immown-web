@@ -24,7 +24,7 @@ module.exports = function (shipit) {
             shipit.log(res);
             shipit.remote('cp /home/nodeapps/web-env.js /opt/immodispo-web/current/env.js').then(function(res) {
                 shipit.log(res);
-                shipit.remote('pm2 reload web').then(function(res) {
+                shipit.remote('pm2 restart web').then(function(res) {
                     shipit.log(res);
                 });
             });

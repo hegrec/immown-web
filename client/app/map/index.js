@@ -97,13 +97,14 @@ ImmoMap.prototype.buildMapURL = function buildMapURL() {
     var url = '?',
         sidebar = $('#map-sidebar'),
         mapLat = this.map.getCenter().lat() + '',
-        mapLng = this.map.getCenter().lng() + '';
-
+        mapLng = this.map.getCenter().lng() + '',
+        mapFilterFormValues = {};
     mapLat = mapLat.substring(0, 6);
     mapLng = mapLng.substring(0, 6);
     url += 'lat=' + mapLat + '&lng=' + mapLng + "&zoom=" + this.map.getZoom();
     if (this.rentalMode) {
         url += '&rent=1';
+        mapFilterFormValues['rent'] = 1;
     }
 
     if (sidebar.css('display') == 'none') {
@@ -112,26 +113,32 @@ ImmoMap.prototype.buildMapURL = function buildMapURL() {
 
     if (sidebar.find('input[name="minprice"]').val()) {
         url += "&min-price=" + sidebar.find('input[name="minprice"]').val();
+        mapFilterFormValues['min-price'] = sidebar.find('input[name="minprice"]').val();
     }
 
     if (sidebar.find('input[name="maxprice"]').val()) {
         url += "&max-price=" + sidebar.find('input[name="maxprice"]').val();
+        mapFilterFormValues['max-price'] = sidebar.find('input[name="maxprice"]').val();
     }
 
     if (sidebar.find('input[name="minsize"]').val()) {
         url += "&min-size=" + sidebar.find('input[name="minsize"]').val();
+        mapFilterFormValues['min-size'] = sidebar.find('input[name="minsize"]').val();
     }
 
     if (sidebar.find('input[name="maxsize"]').val()) {
         url += "&max-size=" + sidebar.find('input[name="maxsize"]').val();
+        mapFilterFormValues['max-size'] = sidebar.find('input[name="maxsize"]').val();
     }
 
     if (sidebar.find('input[name="minroom"]').val()) {
         url += "&min-room=" + sidebar.find('input[name="minroom"]').val();
+        mapFilterFormValues['min-room'] = sidebar.find('input[name="minroom"]').val();
     }
 
     if (sidebar.find('input[name="maxroom"]').val()) {
         url += "&max-room=" + sidebar.find('input[name="maxroom"]').val();
+        mapFilterFormValues['max-room'] = sidebar.find('input[name="maxroom"]').val();
     }
 
     if (sidebar.find('select[name="sort"]').val() != 'featured') {
@@ -140,15 +147,23 @@ ImmoMap.prototype.buildMapURL = function buildMapURL() {
 
     if (!sidebar.find('input[name="construct_type"].search_a').prop('checked')) {
         url += "&apartment=" + 0;
+        mapFilterFormValues['apartment'] = 0;
     }
 
     if (!sidebar.find('input[name="construct_type"].search_h').prop('checked')) {
         url += "&house=" + 0;
+        mapFilterFormValues['house'] = 0;
     }
 
     if (!sidebar.find('input[name="construct_type"].search_t').prop('checked')) {
         url += "&land=" + 0;
+        mapFilterFormValues['land'] = 0;
     }
+
+    if (window.localStorage) {
+        window.localStorage.mapFilterFormValues = JSON.stringify(mapFilterFormValues);
+    }
+
     return "/map/" + url;
 };
 
@@ -171,7 +186,16 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
 
     var url = location.search.substr(1);
     var params = url.split('&');
-    var paramKeys = {};
+    var paramKeys = {},
+        localStore = window.localStorage || {},
+        filterOpts = JSON.parse(localStore.mapFilterFormValues || {});
+
+    //localstorage first
+    _.forOwn(filterOpts, function(opt, key) {
+        paramKeys[key] = opt;
+    });
+
+    //url overrides
     _.each(params, function(param) {
         var split = param.split('=');
         paramKeys[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
@@ -217,16 +241,17 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
         $('select[name="sort"]').val(paramKeys['sort']);
     }
 
-    if (paramKeys['rent']) {
+    if (paramKeys['rent'] == 1) {
         $("input[name='rent_or_sale'][value='rent']").prop('checked', true);
         self.rentalMode = true;
     } else {
         $("input[name='rent_or_sale'][value='sale']").prop('checked', true);
     }
 
+    self.updateMapURL();
+
     $("input[name='rent_or_sale']").on('change', function () {
         self.rentalMode = $(this).val() == 'rent';
-
         self.clearMarkers();
         self.loadMapIcons();
         self.updateMapURL();

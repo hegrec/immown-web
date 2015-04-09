@@ -3,6 +3,6 @@ module.exports = {
     CDN_ROOT: "http://cdn.immown.com",
     api: {
         username: 'web',
-        password: 'web'
+        password: 'ib8sf3rf'
     }
 };

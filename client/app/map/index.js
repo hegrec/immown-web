@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     MapIcon = require('./helper/MapIcon'),
+    currencyConverter = require('./../../../lib/currencyConverter'),
     formatters = require('./../util/formatters');
 
 function ImmoMap(application) {
@@ -16,6 +17,35 @@ function ImmoMap(application) {
     this.ajaxSidebarRequest = null;
     this.ajaxOverviewRequest = null;
     this.markerLookup = {};
+    this.salePrices = [
+        50000,
+        100000,
+        200000,
+        300000,
+        400000,
+        500000,
+        600000,
+        700000,
+        800000,
+        900000,
+        1000000
+    ];
+
+    this.rentPrices = [
+        100,
+        250,
+        500,
+        1000,
+        2000,
+        3000,
+        4000,
+        5000,
+        6000,
+        7000,
+        8000,
+        9000,
+        10000
+    ];
     this.createGoogleMap('map-canvas');
     this.setupFilterForm();
 
@@ -93,105 +123,201 @@ ImmoMap.prototype.renderBoundaries = function (doc) {
     });
 };
 
-ImmoMap.prototype.buildMapURL = function buildMapURL() {
-    var url = '?',
-        sidebar = $('#map-sidebar'),
+ImmoMap.prototype.buildFilterState = function () {
+    var sidebar = $('#map-sidebar'),
         mapLat = this.map.getCenter().lat() + '',
         mapLng = this.map.getCenter().lng() + '',
-        mapFilterFormValues = {};
-    mapLat = mapLat.substring(0, 6);
-    mapLng = mapLng.substring(0, 6);
-    url += 'lat=' + mapLat + '&lng=' + mapLng + "&zoom=" + this.map.getZoom();
-    if (this.rentalMode) {
-        url += '&rent=1';
-        mapFilterFormValues['rent'] = 1;
-    }
+        minPrice,
+        maxPrice,
+        minSize,
+        maxSize,
+        minRoom,
+        maxRoom,
+        filterState = {};
 
     if (sidebar.css('display') == 'none') {
         sidebar = $('.menu_mobile_app.filter-form');
     }
 
-    if (sidebar.find('input[name="minprice"]').val()) {
-        url += "&min-price=" + sidebar.find('input[name="minprice"]').val();
-        mapFilterFormValues['min-price'] = sidebar.find('input[name="minprice"]').val();
+    mapLat = mapLat.substring(0, 6);
+    mapLng = mapLng.substring(0, 6);
+
+    filterState['lat'] = mapLat;
+    filterState['lng'] = mapLng;
+    filterState['zoom'] = this.map.getZoom();
+
+    if (this.rentalMode) {
+        filterState['rent'] = 1;
+    } else {
+        filterState['rent'] = 0;
     }
 
-    if (sidebar.find('input[name="maxprice"]').val()) {
-        url += "&max-price=" + sidebar.find('input[name="maxprice"]').val();
-        mapFilterFormValues['max-price'] = sidebar.find('input[name="maxprice"]').val();
+    minPrice = Number(sidebar.find('select[name="minprice"]').val());
+    maxPrice = Number(sidebar.find('select[name="maxprice"]').val());
+    minSize = Number(sidebar.find('select[name="minsize"]').val());
+    maxSize = Number(sidebar.find('select[name="maxsize"]').val());
+    minRoom = Number(sidebar.find('select[name="minroom"]').val());
+    maxRoom = Number(sidebar.find('select[name="maxroom"]').val());
+
+    if (minPrice != 0) {
+        if (this.rentalMode && _.indexOf(this.rentPrices, minPrice) > -1) {
+            filterState['min-price-rent'] = minPrice;
+        } else if (_.indexOf(this.salePrices, minPrice) > -1) {
+            filterState['min-price-sale'] = minPrice;
+        }
     }
 
-    if (sidebar.find('input[name="minsize"]').val()) {
-        url += "&min-size=" + sidebar.find('input[name="minsize"]').val();
-        mapFilterFormValues['min-size'] = sidebar.find('input[name="minsize"]').val();
+    if (maxPrice != 0) {
+        if (this.rentalMode && _.indexOf(this.rentPrices, maxPrice) > -1) {
+            filterState['max-price-rent'] = maxPrice;
+        } else if (_.indexOf(this.salePrices, maxPrice) > -1) {
+            filterState['max-price-sale'] = maxPrice;
+        }
     }
 
-    if (sidebar.find('input[name="maxsize"]').val()) {
-        url += "&max-size=" + sidebar.find('input[name="maxsize"]').val();
-        mapFilterFormValues['max-size'] = sidebar.find('input[name="maxsize"]').val();
+    if (minSize) {
+        filterState['min-size'] = maxPrice;
     }
 
-    if (sidebar.find('input[name="minroom"]').val()) {
-        url += "&min-room=" + sidebar.find('input[name="minroom"]').val();
-        mapFilterFormValues['min-room'] = sidebar.find('input[name="minroom"]').val();
+    if (maxSize) {
+        filterState['max-size'] = maxSize;
     }
 
-    if (sidebar.find('input[name="maxroom"]').val()) {
-        url += "&max-room=" + sidebar.find('input[name="maxroom"]').val();
-        mapFilterFormValues['max-room'] = sidebar.find('input[name="maxroom"]').val();
+    if (minRoom) {
+        filterState['min-room'] = minRoom;
+    }
+
+    if (maxRoom) {
+        filterState['max-room'] = maxRoom;
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_a').prop('checked')) {
+        filterState['apartment'] = 0;
+    } else {
+        filterState['apartment'] = 1;
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_h').prop('checked')) {
+        filterState['house'] = 0;
+    } else {
+        filterState['house'] = 1;
+    }
+
+    if (!sidebar.find('input[name="construct_type"].search_t').prop('checked')) {
+        filterState['land'] = 0;
+    } else {
+        filterState['land'] = 1;
+    }
+
+    return filterState;
+};
+
+ImmoMap.prototype.buildMapURL = function () {
+    var sidebar = $('#map-sidebar'),
+        url = '?',
+        state = this.buildFilterState();
+
+    if (sidebar.css('display') == 'none') {
+        sidebar = $('.menu_mobile_app.filter-form');
+    }
+
+    url += 'lat='+ state['lat']
+        + '&lng=' + state['lng']
+        + "&zoom=" + state['zoom']
+        + "&rent=" + state['rent'];
+
+    if (this.rentalMode && state['min-price-rent']) {
+        url += "&min-price=" + state['min-price-rent'];
+    } else if (state['min-price-sale']) {
+        url += "&min-price=" + state['min-price-sale'];
+    }
+
+    if (this.rentalMode && state['max-price-rent']) {
+        url += "&max-price=" + state['max-price-rent'];
+    } else if (state['min-price-sale']) {
+        url += "&max-price=" + state['max-price-sale'];
+    }
+
+    if (state['min-size']) {
+        url += "&min-size=" + state['min-size'];
+    }
+
+    if (state['max-size']) {
+        url += "&max-size=" + state['max-size'];
+    }
+
+    if (state['min-room']) {
+        url += "&min-room=" + state['min-room'];
+    }
+
+    if (state['max-room']) {
+        url += "&max-room=" + state['max-room'];
     }
 
     if (sidebar.find('select[name="sort"]').val() != 'featured') {
         url += "&sort=" + sidebar.find('select[name="sort"]').val();
     }
 
-    if (!sidebar.find('input[name="construct_type"].search_a').prop('checked')) {
-        url += "&apartment=" + 0;
-        mapFilterFormValues['apartment'] = 0;
+    if (state['apartment'] == 0) {
+        url += "&apartment=0";
     }
 
-    if (!sidebar.find('input[name="construct_type"].search_h').prop('checked')) {
-        url += "&house=" + 0;
-        mapFilterFormValues['house'] = 0;
+    if (state['house'] == 0) {
+        url += "&house=0";
     }
 
-    if (!sidebar.find('input[name="construct_type"].search_t').prop('checked')) {
-        url += "&land=" + 0;
-        mapFilterFormValues['land'] = 0;
-    }
-
-    if (window.localStorage) {
-        window.localStorage.mapFilterFormValues = JSON.stringify(mapFilterFormValues);
+    if (state['land'] == 0) {
+        url += "&land=0";
     }
 
     return "/map/" + url;
 };
+
+
+ImmoMap.prototype.saveFilterState = function () {
+    var state = this.buildFilterState(),
+        localStore = window.localStorage || {},
+        filterOpts = localStore.mapFilterFormValues || '{}',
+        existingState = JSON.parse(filterOpts);
+
+    _.forOwn(state, function(val, key) {
+        existingState[key] = val;
+    });
+
+    localStore.mapFilterFormValues = JSON.stringify(existingState);
+};
+
+ImmoMap.prototype.loadFilterState = function () {
+    var localStore = window.localStorage || {},
+        filterOpts = localStore.mapFilterFormValues || '{}';
+
+    return JSON.parse(filterOpts);
+};
+
 
 ImmoMap.prototype.updateMapURL = function updateMapURL() {
     var self = this;
     History.replaceState({}, "Immown", self.buildMapURL());
 };
 
-ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
-    var self = this;
+ImmoMap.prototype.setupFilterForm = function () {
+    var self = this,
+        url = location.search.substr(1),
+        params = url.split('&'),
+        paramKeys = {},
+        minPriceKey = 'min-price-sale',
+        maxPriceKey = 'max-price-sale',
+        loadedState = self.loadFilterState();
 
     $(".js-filter-form").on('submit', function(evt) {
-
         self.clearMarkers();
         self.loadMapIcons();
-
         self.updateMapURL();
         return false;
     });
 
-    var url = location.search.substr(1);
-    var params = url.split('&');
-    var paramKeys = {},
-        localStore = window.localStorage || {},
-        filterOpts = JSON.parse(localStore.mapFilterFormValues || {});
-
     //localstorage first
-    _.forOwn(filterOpts, function(opt, key) {
+    _.forOwn(loadedState, function(opt, key) {
         paramKeys[key] = opt;
     });
 
@@ -201,12 +327,23 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
         paramKeys[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
     });
 
-    if (paramKeys['min-price']) {
-        $('input[name="minprice"]').val(paramKeys['min-price']);
+    if (paramKeys['rent'] == 1) {
+        $("input[name='rent_or_sale'][value='rent']").prop('checked', true);
+        self.rentalMode = true;
+        minPriceKey = 'min-price-rent';
+        maxPriceKey = 'max-price-rent';
+    } else {
+        $("input[name='rent_or_sale'][value='sale']").prop('checked', true);
     }
 
-    if (paramKeys['max-price']) {
-        $('input[name="maxprice"]').val(paramKeys['max-price']);
+    if (paramKeys[minPriceKey]) {
+        $('select[name="minprice"]').val(paramKeys[minPriceKey]);
+        self.updateMaxPrices(paramKeys[minPriceKey], paramKeys[maxPriceKey]);
+    }
+
+    if (paramKeys[maxPriceKey]) {
+        $('select[name="maxprice"]').val(paramKeys[maxPriceKey]);
+        self.updateMinPrices(paramKeys[maxPriceKey], paramKeys[minPriceKey]);
     }
 
     if (paramKeys['min-size']) {
@@ -241,33 +378,159 @@ ImmoMap.prototype.setupFilterForm = function setupFilterForm() {
         $('select[name="sort"]').val(paramKeys['sort']);
     }
 
-    if (paramKeys['rent'] == 1) {
-        $("input[name='rent_or_sale'][value='rent']").prop('checked', true);
-        self.rentalMode = true;
-    } else {
-        $("input[name='rent_or_sale'][value='sale']").prop('checked', true);
-    }
 
     self.updateMapURL();
 
     $("input[name='rent_or_sale']").on('change', function () {
         self.rentalMode = $(this).val() == 'rent';
+        self.saveFilterState();
+        self.updatePriceLists();
         self.clearMarkers();
         self.loadMapIcons();
         self.updateMapURL();
     });
 
     $("input[name='construct_type']").on('change', function () {
+        self.saveFilterState();
         self.clearMarkers();
         self.loadMapIcons();
         self.updateMapURL();
     });
 
     $("select[name='sort']").on('change', function () {
+        self.saveFilterState();
         self.clearMarkers();
         self.loadMapIcons();
         self.updateMapURL();
     });
+
+    $("select[name='minprice']").on('change', function () {
+        self.saveFilterState();
+        self.clearMarkers();
+        self.updateMaxPrices($(this).val());
+        self.loadMapIcons();
+        self.updateMapURL();
+    });
+
+    $("select[name='maxprice']").on('change', function () {
+        self.saveFilterState();
+        self.clearMarkers();
+        self.updateMinPrices($(this).val());
+        self.loadMapIcons();
+        self.updateMapURL();
+    });
+};
+
+ImmoMap.prototype.updatePriceLists = function () {
+    var self = this,
+        minPriceKey = 'min-price-sale',
+        maxPriceKey = 'max-price-sale',
+        minPrice = 0,
+        maxPrice = 0,
+        loadedState = this.loadFilterState();
+
+    if (this.rentalMode) {
+        minPriceKey = 'min-price-rent';
+        maxPriceKey = 'max-price-rent';
+    }
+
+    if (loadedState[minPriceKey]) {
+        minPrice = loadedState[minPriceKey];
+        $('select[name="minprice"]').val(minPrice);
+    }
+
+    if (loadedState[maxPriceKey]) {
+        maxPrice = loadedState[maxPriceKey];
+        $('select[name="maxprice"]').val(maxPrice);
+
+    }
+
+    self.updateMaxPrices(minPrice, maxPrice);
+    self.updateMinPrices(maxPrice, minPrice);
+};
+
+ImmoMap.prototype.updateMaxPrices = function (minValue, val) {
+    var maxValues = [],
+        sidebar = $('#map-sidebar'),
+        maxSelector,
+        priceList = this.salePrices,
+        currentValue = val,
+        html = '<option value="0">Pas de max</option>';
+
+    if (sidebar.css('display') == 'none') {
+        sidebar = $('.menu_mobile_app.filter-form');
+    }
+
+    maxSelector = sidebar.find("select[name='maxprice']");
+    if (!val) {
+        currentValue = maxSelector.val();
+    }
+
+    if (this.rentalMode) {
+        priceList = this.rentPrices;
+    }
+
+    _.each(priceList, function(priceOption) {
+        if (minValue < priceOption || minValue == 0) {
+            maxValues.push(priceOption);
+        }
+    });
+
+    _.each(maxValues, function(val) {
+        html += '<option value="' + val;
+
+        if (currentValue == val) {
+            html += '" selected="selected">'
+        } else {
+            html += '">';
+        }
+
+        html += currencyConverter(val) + '</option>';
+    });
+
+    maxSelector.html(html);
+};
+
+ImmoMap.prototype.updateMinPrices = function (maxValue, val) {
+    var minValues = [],
+        sidebar = $('#map-sidebar'),
+        minSelector,
+        priceList = this.salePrices,
+        currentValue = val,
+        html = '<option value="0">Pas de min</option>';
+
+    if (sidebar.css('display') == 'none') {
+        sidebar = $('.menu_mobile_app.filter-form');
+    }
+
+    minSelector = sidebar.find("select[name='minprice']");
+    if (!val) {
+        currentValue = minSelector.val();
+    }
+
+    if (this.rentalMode) {
+        priceList = this.rentPrices;
+    }
+
+    _.each(priceList, function(priceOption) {
+        if (maxValue > priceOption || maxValue == 0) {
+            minValues.push(priceOption);
+        }
+    });
+
+    _.each(minValues, function(val) {
+        html += '<option value="' + val;
+
+        if (currentValue == val) {
+            html += '" selected="selected">'
+        } else {
+            html += '">';
+        }
+
+        html += currencyConverter(val) + '</option>';
+    });
+
+    minSelector.html(html);
 };
 
 ImmoMap.prototype.createGoogleMap = function createMap(canvasId) {
@@ -552,8 +815,8 @@ ImmoMap.prototype.buildQueryString = function buildQueryString() {
             sidebar = $('.menu_mobile_app.filter-form');
         }
 
-        min_price = Number(sidebar.find('input[name="minprice"]').val()),
-        max_price = Number(sidebar.find('input[name="maxprice"]').val()),
+        min_price = Number(sidebar.find('select[name="minprice"]').val()),
+        max_price = Number(sidebar.find('select[name="maxprice"]').val()),
         min_surface = Number(sidebar.find('input[name="minsize"]').val()),
         max_surface = Number(sidebar.find('input[name="maxsize"]').val()),
         min_room = Number(sidebar.find('input[name="minroom"]').val()),

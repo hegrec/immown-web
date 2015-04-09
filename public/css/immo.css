@@ -73,7 +73,7 @@ ul.listing-results {
     height: 200px;
     padding:5px;
     border-bottom: 1px solid #eee;
-    background-color: #ccc;
+    background-color: #eee;
 }
 
 .listing-results a {
@@ -179,8 +179,9 @@ footer {
 }
 
 footer {
-    background-color: #cce9ff;
-    font-size: 12px
+    background-color: #50A4E5;
+    font-size: 12px;
+    color: white;
 }
 
 footer .copyright img {
@@ -189,12 +190,24 @@ footer .copyright img {
 }
 
 footer a,
+footer a:hover,
 footer strong {
     font-size: 12px;
+    color: white;
+    font-weight: bold;
+}
+
+footer strong {
+    font-size: 13px;
+    margin-bottom: 5px;
 }
 
 footer ul {
     list-style: none;
+}
+
+footer li.heading {
+    margin-bottom: 10px;
 }
 
 footer li {
@@ -315,6 +328,97 @@ footer li {
 }
 
 
+.overview {
+    width: 300px;
+    max-width: 100%;
+    height: 160px;
+}
+
+.overview .img-thumbnail {
+    background-size: cover;
+    background-position: 50%;
+    width: 150px;
+    height: 150px;
+    float: left;
+}
+
+.overview .img-thumbnail .counter {
+    width:100%;
+    height: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    background-color:rgba(0,0,0,0.6);
+    color: white;
+}
+
+.checkboxbutton {
+    text-align: center;
+    background-color:#EFEFEF;
+    overflow:auto;
+    float:left;
+    border-left: 1px solid #cfdce5;
+    border-bottom: 1px solid #cfdce5;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+}
+
+.checkboxbutton label {
+    width: 100%;
+}
+
+.checkboxbutton label span {
+    text-align:center;
+    padding: 10px 10px;
+    display:block;
+    font-weight: bold;
+}
+
+.checkboxbutton input[type="checkbox"] + span:before,
+.checkboxbutton input[type="radio"] + span:before {
+    content: url('/img/radio_off.svg');
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+}
+
+.checkboxbutton input[type="checkbox"] + span:before {
+    content: url('/img/check_off.svg');
+}
+
+.checkboxbutton input[type="radio"]:checked + span:before {
+    content: url('/img/radio_on.svg');
+}
+
+.checkboxbutton input[type="checkbox"]:checked + span:before {
+    content: url('/img/check_on.svg');
+}
+
+.checkboxbutton label input {
+    position:absolute;
+    top:-20px;
+}
+
+.checkboxbutton input:hover + span {
+    background-color:#cfdce5;
+}
+
+.checkboxbutton input:checked + span {
+    background-color:#50a4e5;
+    color:#fff;
+}
+
+.checkboxbutton input:checked:hover + span {
+    background-color:#59b7ff;
+    color:#fff;
+}
 
 .hero-header .top-bar-section ul li,
 .hero-header .top-bar-section li:not(.has-form) a:not(.button),
@@ -736,6 +840,16 @@ h3.js-result-count {
     .top-bar .title-area img {
         height: 75%;
     }
+
+    .swiper-container {
+        height: 500px;
+    }
+
+    .checkboxbutton input[type="checkbox"] + span:before,
+    .checkboxbutton input[type="radio"] + span:before{
+        display: inline-block;
+        margin: 0;
+    }
 }
 
 @media screen and (min-width: 64.063em) {
@@ -743,72 +857,4 @@ h3.js-result-count {
     .top-bar button.search-submitter {
         top: 0.53125rem;
     }
-}
-
-.overview {
-    width: 300px;
-    max-width: 100%;
-    height: 160px;
-}
-
-.overview .img-thumbnail {
-    background-size: cover;
-    background-position: 50%;
-    width: 150px;
-    height: 150px;
-    float: left;
-}
-
-.overview .img-thumbnail .counter {
-    width:100%;
-    height: 20px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    background-color:rgba(0,0,0,0.6);
-    color: white;
-}
-
-.checkboxbutton {
-    text-align: center;
-    background-color:#EFEFEF;
-    overflow:auto;
-    float:left;
-    border-left: 1px solid #cfdce5;
-    border-bottom: 1px solid #cfdce5;
-    box-sizing:border-box;
-    -moz-box-sizing:border-box;
-    -webkit-box-sizing:border-box;
-}
-
-.checkboxbutton label {
-    width: 100%;
-}
-
-.checkboxbutton label span {
-    text-align:center;
-    padding: 10px 10px;
-    display:block;
-}
-
-.checkboxbutton label input {
-    position:absolute;
-    top:-20px;
-}
-
-.checkboxbutton input:hover + span {
-    background-color:#cfdce5;
-}
-
-.checkboxbutton input:checked + span {
-    background-color:#50a4e5;
-    color:#fff;
-}
-
-.checkboxbutton input:checked:hover + span {
-    background-color:#59b7ff;
-    color:#fff;
 }

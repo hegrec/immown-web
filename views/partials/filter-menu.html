@@ -34,8 +34,40 @@
         </div>
     </div>
     <div class="row">
-        <label class="small-6 columns">Prix min<input type="text" name="minprice"></label>
-        <label class="small-6 columns">Prix max<input type="text" name="maxprice"></label>
+        <label class="small-6 columns">
+            Prix Min:
+            <select name="minprice">
+                <option value="0">Pas de min</option>
+                <option value="50000">{{ '50000' | currency }}</option>
+                <option value="100000">{{ '100000' | currency }}</option>
+                <option value="200000">{{ '200000' | currency }}</option>
+                <option value="300000">{{ '300000' | currency }}</option>
+                <option value="400000">{{ '400000' | currency }}</option>
+                <option value="500000">{{ '500000' | currency }}</option>
+                <option value="600000">{{ '600000' | currency }}</option>
+                <option value="700000">{{ '700000' | currency }}</option>
+                <option value="800000">{{ '800000' | currency }}</option>
+                <option value="900000">{{ '900000' | currency }}</option>
+                <option value="1000000">{{ '1000000' | currency }}</option>
+            </select>
+        </label>
+        <label class="small-6 columns">
+            Prix Max:
+            <select name="maxprice">
+                <option value="0">Pas de max</option>
+                <option value="50000">{{ '50000' | currency }}</option>
+                <option value="100000">{{ '100000' | currency }}</option>
+                <option value="200000">{{ '200000' | currency }}</option>
+                <option value="300000">{{ '300000' | currency }}</option>
+                <option value="400000">{{ '400000' | currency }}</option>
+                <option value="500000">{{ '500000' | currency }}</option>
+                <option value="600000">{{ '600000' | currency }}</option>
+                <option value="700000">{{ '700000' | currency }}</option>
+                <option value="800000">{{ '800000' | currency }}</option>
+                <option value="900000">{{ '900000' | currency }}</option>
+                <option value="1000000">{{ '1000000' | currency }}</option>
+            </select>
+        </label>
     </div>
     <div class="row">
         <label class="small-6 columns">Pièces min<input type="text" name="minroom"></label>

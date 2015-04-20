@@ -1,14 +1,11 @@
 <div class="overview">
-
     <a href="/listing/{{listing.id}}">
         <div class="img-thumbnail" style="position: relative; background-image:url({{listing.images[0].standard_url | cdn}});">
             <div class="counter">
                 {{listing.images.length}} images
             </div>
         </div>
-    </a>
-    <a href="/listing/{{listing.id}}"><div style='padding-left: 10px; font-size: 13px;'>
-
+        <div class="right">
         {% set listing_type = 'Maison' %}
 
         {% if listing.construction_type == '2' %}
@@ -27,10 +24,9 @@
         {% endif %}
         {% if listing.total_size %}
         <div>{{ listing.total_size }}m<sup>2</sup></div>
-        {% else %}
-        <div>&nbsp;</div>
         {% endif %}
-        <span class="floatRight">{{ listing.town.name }}</span>
-        <button class="button small right">En savoir plus</button>
+        <span>{{ listing.town.name }}</span>
+        <button class="button small">En savoir plus</button>
+        </div>
     </a>
 </div>

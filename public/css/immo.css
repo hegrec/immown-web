@@ -296,13 +296,14 @@ footer li {
 
 .hero-header .header-focus h2 {
     font-weight: bold;
-    font-size: 3em;
-    color: black;
+    font-size: 1.3em;
+    color: white;
 }
 
 .hero-header h3 {
     font-weight: bold;
-    color: black;
+    font-size: 1em;
+    color: white;
 }
 
 .hero-header .top-bar-section ul li {
@@ -334,12 +335,23 @@ footer li {
     height: 160px;
 }
 
+.overview a {
+    color: black;
+}
+
 .overview .img-thumbnail {
     background-size: cover;
     background-position: 50%;
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 160px;
     float: left;
+}
+
+.overview button {
+    margin-bottom: 5px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 .overview .img-thumbnail .counter {
@@ -381,6 +393,7 @@ footer li {
 .checkboxbutton input[type="checkbox"] + span:before,
 .checkboxbutton input[type="radio"] + span:before {
     content: url('/img/radio_off.svg');
+    fill: white;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -427,14 +440,14 @@ footer li {
 }
 
 .hero-header .top-bar-section ul li > a {
-    color: #000;
+    color: white;
     font-weight: bold;
     font-size: 15px;
     cursor: pointer;
 }
 
 .hero-header .top-bar-section ul li > a:hover {
-    color: #333;
+    color: #1bb2ab;
 }
 
 .hero-header .top-bar-section .has-form {
@@ -748,9 +761,7 @@ h3.js-result-count {
     box-shadow: none;
 }
 
-.hero-header .top-bar svg {
-    fill: black;
-}
+
 
 .top-bar .top-bar-section {
     display: block;
@@ -830,6 +841,10 @@ h3.js-result-count {
     }
 
     .hero-header .header-focus h2 {
+        font-size: 3em;
+    }
+
+    .hero-header .header-focus h3 {
         font-size: 2em;
     }
 

@@ -409,6 +409,7 @@ module.exports = function(server) {
             }
 
             var getIconListings = function() {
+                console.log(env.API_HOST + "/listings?sort=" + sortTerm + "&limit=1000&" + filterString);
                 request.server.app.api.get(env.API_HOST + "/listings?sort=" + sortTerm + "&limit=1000&" + filterString, function (err, sidebarResults) {
 
                     if (err) {

@@ -32,8 +32,6 @@ function ImmoMap(application) {
     ];
 
     this.rentPrices = [
-        100,
-        250,
         500,
         1000,
         2000,

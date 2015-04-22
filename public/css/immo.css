@@ -300,6 +300,10 @@ footer li {
     color: white;
 }
 
+.hero-header .header-focus form {
+    margin-top: 60px;
+}
+
 .hero-header h3 {
     font-weight: bold;
     font-size: 1em;
@@ -444,10 +448,6 @@ footer li {
     font-weight: bold;
     font-size: 15px;
     cursor: pointer;
-}
-
-.hero-header .top-bar-section ul li > a:hover {
-    color: #1bb2ab;
 }
 
 .hero-header .top-bar-section .has-form {
@@ -864,6 +864,7 @@ h3.js-result-count {
     .checkboxbutton input[type="radio"] + span:before{
         display: inline-block;
         margin: 0;
+        margin-right: 5px;
     }
 }
 
